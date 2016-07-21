@@ -339,15 +339,15 @@ By logical conclusion, if a value is *not* on that list, it must be on *another 
 
 #### Falsy Objects
 
-Wait a minute, that section title even sounds contradictory. I literally *just said* the spec calls all objects truthy, right? There should be no such thing as a "falsy object."
+且慢，这节的标题似乎有点自相矛盾。我**刚刚说过**JS规范中要求所有的对象都是truthy，对不对？所以这不应该有“falsy object”。
 
-What could that possibly even mean?
+那可能意味着什么？
 
-You might be tempted to think it means an object wrapper (see Chapter 3) around a falsy value (such as `""`, `0` or `false`). But don't fall into that *trap*.
+你也许会认为这意味着一个falsy value（如`""`、`0`或`false`）的对象包装类（参见第三章）。但是，不要落入**陷阱**。
 
-**Note:** That's a subtle specification joke some of you may get.
+**注意：** 你可能会得到一个微妙的规范玩笑。
 
-Consider:
+考虑如下：
 
 ```js
 var a = new Boolean( false );
@@ -355,7 +355,7 @@ var b = new Number( 0 );
 var c = new String( "" );
 ```
 
-We know all three values here are objects (see Chapter 3) wrapped around obviously falsy values. But do these objects behave as `true` or as `false`? That's easy to answer:
+我们知道，这三个值都是明显的假值的包装对象。但是这些对象表现为`true`或`false`呢？这很容易回答：
 
 ```js
 var d = Boolean( a && b && c );
@@ -363,39 +363,47 @@ var d = Boolean( a && b && c );
 d; // true
 ```
 
-So, all three behave as `true`, as that's the only way `d` could end up as `true`.
+所有三个都表现为`true`，所有`d`的结果只能为`true`。
 
-**Tip:** Notice the `Boolean( .. )` wrapped around the `a && b && c` expression -- you might wonder why that's there. We'll come back to that later in this chapter, so make a mental note of it. For a sneak-peek (trivia-wise), try for yourself what `d` will be if you just do `d = a && b && c` without the `Boolean( .. )` call!
+**提示：**请注意包裹`a && b && c`的那个`Boolean( .. )`表达式——你可能想知道为什么它在那里。我们会在本章后面讲解，所以你先记在脑子里。想要抢先看，试试不带上`Boolean( .. )`来调用`d = a && b && c`，看看`d`的结果是什么。
 
-So, if "falsy objects" are **not just objects wrapped around falsy values**, what the heck are they?
+所以，如果“falsy objects”**不是包裹假值的对象**，那它究竟是什么鬼？
 
-The tricky part is that they can show up in your JS program, but they're not actually part of JavaScript itself.
+最蛋疼的地方是，它们可以在你的JS程序中显式出来，但它们并不是真正的JavaScript的一部分。
 
-**What!?**
+**开始进入懵逼状态：）**
 
 There are certain cases where browsers have created their own sort of *exotic* values behavior, namely this idea of "falsy objects," on top of regular JS semantics.
 
-A "falsy object" is a value that looks and acts like a normal object (properties, etc.), but when you coerce it to a `boolean`, it coerces to a `false` value.
+有些情况下，浏览器会创建自己的那种**异国情调**的值行为，把这个想法取名为“falsy objects”，在正规JS语义之上定义的。
 
-**Why!?**
+一个“falsy object”是一个值，它的外观和行为都表现得像一个正常的对象（或属性等），但是当你把它强制转换为`boolean`，它会被转成`false`。
+
+**为什么！？**
 
 The most well-known case is `document.all`: an array-like (object) provided to your JS program *by the DOM* (not the JS engine itself), which exposes elements in your page to your JS program. It *used* to behave like a normal object--it would act truthy. But not anymore.
 
-`document.all` itself was never really "standard" and has long since been deprecated/abandoned.
+最著名的例子是`document.all`：它是由**DOM提供**（不是JS引擎本身提供的）给你的JS程序的一个类数组对象，它把当前页面的元素暴露给你的JS程序。它**曾经**表现得像个正常的对象——它表现得truthy。但现在不是了。
 
-"Can't they just remove it, then?" Sorry, nice try. Wish they could. But there's far too many legacy JS code bases out there that rely on using it.
+`document.all`本身从来就不是真正的**标准**，并且它早已经被弃用了。
 
-So, why make it act falsy? Because coercions of `document.all` to `boolean` (like in `if` statements) were almost always used as a means of detecting old, nonstandard IE.
+“难道就不能把它移除掉吗？”对不起，这是个不错的尝试。我也希望他们能。但是这里有太多太多遗留的JS代码，都依赖于它才能运行。
+
+那为什么要让它表现的像假值？因为将`document.all`强制转换成`boolean`（比如在`if`语句中），经常被用于检测老版本的非标准IE。（译者注：没错，IE又出来实力坑你一波！）
 
 IE has long since come up to standards compliance, and in many cases is pushing the web forward as much or more than any other browser. But all that old `if (document.all) { /* it's IE */ }` code is still out there, and much of it is probably never going away. All this legacy code is still assuming it's running in decade-old IE, which just leads to bad browsing experience for IE users.
 
-So, we can't remove `document.all` completely, but IE doesn't want `if (document.all) { .. }` code to work anymore, so that users in modern IE get new, standards-compliant code logic.
+在符合标准之前，IE已经存在很久了，在许多情况下它推动Web向前发展，并不比其他任何浏览器少。但是所有的老的`if (document.all) { /* it's IE */ }`代码仍然在那里，大部分可能永远不会消失。所有这些遗留代码仍然假设它是运行在十年之前的IE上，这导致了IE用户不好的浏览体验。
 
-"What should we do?" **"I've got it! Let's bastardize the JS type system and pretend that `document.all` is falsy!"
+因此，我们不能完全移除`document.all`，但IE不想让`if (document.all) { .. }`代码继续工作，这样新的IE的用户就可以获得新的符合标准的代码逻辑。
+
+“我们应该这么做？”“我知道了！让我们bastardize（退化、变劣）JS类型系统，假装`document.all`是falsy！”
 
 Ugh. That sucks. It's a crazy gotcha that most JS developers don't understand. But the alternative (doing nothing about the above no-win problems) sucks *just a little bit more*.
 
-So... that's what we've got: crazy, nonstandard "falsy objects" added to JavaScript by the browsers. Yay!
+噢，真他妈的坑爹！大多数的JS开发者并不了解这个疯狂的疑难杂症。但另一种做法（对上面的问题不做任何处理）会稍微更坑一点。
+
+所以......这就是我们得到的：疯狂的、非标准的“falsy objects”，通过浏览器添加到JavaScript中。“真是太棒了！！！”
 
 #### Truthy Values
 
