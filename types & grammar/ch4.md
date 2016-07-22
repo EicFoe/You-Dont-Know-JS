@@ -403,13 +403,13 @@ Ugh. That sucks. It's a crazy gotcha that most JS developers don't understand. B
 
 噢，真他妈的坑爹！大多数的JS开发者并不了解这个疯狂的疑难杂症。但另一种做法（对上面的问题不做任何处理）会稍微更坑一点。
 
-所以......这就是我们得到的：疯狂的、非标准的“falsy objects”，通过浏览器添加到JavaScript中。“真是太棒了！！！”
+所以......这就是我们得到的：疯狂的、非标准的“falsy objects”，通过浏览器添加到JavaScript中。“IE棒棒哒！！！”
 
 #### Truthy Values
 
-Back to the truthy list. What exactly are the truthy values? Remember: **a value is truthy if it's not on the falsy list.**
+回到truthy列表。究竟什么值是truthy？记住：**不在falsy列表中的值都是truthy。**
 
-Consider:
+考虑如下：
 
 ```js
 var a = "false";
@@ -421,11 +421,11 @@ var d = Boolean( a && b && c );
 d;
 ```
 
-What value do you expect `d` to have here? It's gotta be either `true` or `false`.
+你觉得这里的`d`的值是什么？它肯定是`true`或`false`。
 
-It's `true`. Why? Because despite the contents of those `string` values looking like falsy values, the `string` values themselves are all truthy, because `""` is the only `string` value on the falsy list.
+答案是`true`。为什么？因为这些字符串的值尽管看起来像假值，但是字符串本身是truthy，因为`""`是唯一在假值列表中的字符串。
 
-What about these?
+那这些的结果是什么？
 
 ```js
 var a = [];				// empty array -- truthy or falsy?
@@ -437,13 +437,13 @@ var d = Boolean( a && b && c );
 d;
 ```
 
-Yep, you guessed it, `d` is still `true` here. Why? Same reason as before. Despite what it may seem like, `[]`, `{}`, and `function(){}` are *not* on the falsy list, and thus are truthy values.
+是的，你猜对了，`d`在这是还是`true`。为什么？与上面的理由是一样的。尽管它们看起来像假值，但是`[]`、`{}`和`function(){}`**并不在**假值列表中，所以它们是truthy values。
 
-In other words, the truthy list is infinitely long. It's impossible to make such a list. You can only make a finite falsy list and consult *it*.
+换句话说，truthy 列表是无限长。做出这样的名单是不可能的。你只能做出有限的falsy列表，请参阅**它**。
 
-Take five minutes, write the falsy list on a post-it note for your computer monitor, or memorize it if you prefer. Either way, you'll easily be able to construct a virtual truthy list whenever you need it by simply asking if it's on the falsy list or not.
+请花五分钟将假值列表写在便签纸上，贴在你的电脑显示器上，或者，如果你愿意，就记住它。无论哪种方式，你会很容易能够建立一个虚拟的truthy列表，只要看它是不是在这个假值列表上。
 
-The importance of truthy and falsy is in understanding how a value will behave if you coerce it (either explicitly or implicitly) to a `boolean` value. Now that you have those two lists in mind, we can dive into coercion examples themselves.
+truthy和falsy的重要性在于理解当一个值（显式或隐式）强制转换成`boolean`值的时候，它会如何表现。现在，既然你已经对这两个列表了然于胸，我们就可以深入了解强制转换的例子了。
 
 ## Explicit Coercion
 
