@@ -528,7 +528,7 @@ d; // 8.14
 
 #### `Date` To `number`
 
-Another common usage of the unary `+` operator is to coerce a `Date` object into a `number`, because the result is the unix timestamp (milliseconds elapsed since 1 January 1970 00:00:00 UTC) representation of the date/time value:
+一元`+`操作符的另外一个常见的用法是将一个`Date`对象强制转换成`number`，转换的结果是unix时间戳（当前时间距离1970年1月1日00:00:00 UTC的毫秒数），代表当前的日期/时间值：
 
 ```js
 var d = new Date( "Mon, 18 Aug 2014 08:53:06 CDT" );
@@ -536,15 +536,15 @@ var d = new Date( "Mon, 18 Aug 2014 08:53:06 CDT" );
 +d; // 1408369986000
 ```
 
-The most common usage of this idiom is to get the current *now* moment as a timestamp, such as:
+这种惯用语法最常见的用法是获取**当前时刻**的时间戳，如：
 
 ```js
 var timestamp = +new Date();
 ```
 
-**Note:** Some developers are aware of a peculiar syntactic "trick" in JavaScript, which is that the `()` set on a constructor call (a function called with `new`) is *optional* if there are no arguments to pass. So you may run across the `var timestamp = +new Date;` form. However, not all developers agree that omitting the `()` improves readability, as it's an uncommon syntax exception that only applies to the `new fn()` call form and not the regular `fn()` call form.
+**注意：**一些开发者都知道在JavaScript中有个特殊的语法“技巧”，就是在构造函数调用（用`new`调用一个函数）中，如果没有参数需要传递，那`()`就是**可选**的。所以，你可能会看到`var timestamp = +new Date;`这种形式的调用。然而，并非所有的开发者都认为省略`()`提高了代码的可读性，因为它是一种不常见的语法异常，它只能用于`new fn()`这种调用形式，而不能用于`fn()`常规的调用形式。
 
-But coercion is not the only way to get the timestamp out of a `Date` object. A noncoercion approach is perhaps even preferable, as it's even more explicit:
+coercion 并不是获取`Date`对象的时间戳的唯一途径。一个noncoercion（非coercion）的方式是更可取的，因为它更明确表现我们的意图：
 
 ```js
 var timestamp = new Date().getTime();
@@ -552,13 +552,13 @@ var timestamp = new Date().getTime();
 // var timestamp = (new Date).getTime();
 ```
 
-But an *even more* preferable noncoercion option is to use the ES5 added `Date.now()` static function:
+但是，一个**更好的**非强制选项是使用ES5添加的`Date.now()`静态函数：
 
 ```js
 var timestamp = Date.now();
 ```
 
-And if you want to polyfill `Date.now()` into older browsers, it's pretty simple:
+如果你想polyfill `Date.now()`到老版本的浏览器中，也很简单：
 
 ```js
 if (!Date.now) {
@@ -568,7 +568,7 @@ if (!Date.now) {
 }
 ```
 
-I'd recommend skipping the coercion forms related to dates. Use `Date.now()` for current *now* timestamps, and `new Date( .. ).getTime()` for getting a timestamp of a specific *non-now* date/time that you need to specify.
+我建议你跳过有关日期强制转换的形式。使用`Date.now()`获取**当前**的时间戳，使用`new Date( .. ).getTime()`获取你指定的**非当前**日期/时间的时间戳。
 
 #### The Curious Case of the `~`
 
