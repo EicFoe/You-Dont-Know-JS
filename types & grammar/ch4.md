@@ -445,21 +445,23 @@ d;
 
 truthy和falsy的重要性在于理解当一个值（显式或隐式）强制转换成`boolean`值的时候，它会如何表现。现在，既然你已经对这两个列表了然于胸，我们就可以深入了解强制转换的例子了。
 
-## Explicit Coercion
+## Explicit Coercion（显式转换）
 
 *Explicit* coercion refers to type conversions that are obvious and explicit. There's a wide range of type conversion usage that clearly falls under the *explicit* coercion category for most developers.
 
-The goal here is to identify patterns in our code where we can make it clear and obvious that we're converting a value from one type to another, so as to not leave potholes for future developers to trip into. The more explicit we are, the more likely someone later will be able to read our code and understand without undue effort what our intent was.
+**Explicit** coercion 指的是明显和显式的转换。对大多数开发者来说，**Explicit** coercion 中有多种类型转换的用法很明显是下降的。（最后一句确实不明白是什么意思，请自行理解）
 
-It would be hard to find any salient disagreements with *explicit* coercion, as it most closely aligns with how the commonly accepted practice of type conversion works in statically typed languages. As such, we'll take for granted (for now) that *explicit* coercion can be agreed upon to not be evil or controversial. We'll revisit this later, though.
+这里的目标是确定我们的代码模式，我们可以说清楚并且很明显得看出我们正在将值从一种类型转成另一种类型，避免给未来的开发者留坑。我们写的代码越明确，就越可能后来的人就能够阅读我们的代码并且不费力气就能明白我们的意图。
+
+你很难找到关于**explicit** coercion 任何突出的分歧，因为它和静态类型语言的行为十分相似，而静态类型语言的行为是大家普遍接受的做法。因此，我们现在会想当然的同意**explicit** coercion 不是邪恶的或有争议性的这个观点。我们之后会重温一下：）
 
 ### Explicitly: Strings <--> Numbers
 
-We'll start with the simplest and perhaps most common coercion operation: coercing values between `string` and `number` representation.
+我们以最简单也最常用的coercion操作开始：字符串和数字之间的强制转换。
 
-To coerce between `string`s and `number`s, we use the built-in `String(..)` and `Number(..)` functions (which we referred to as "native constructors" in Chapter 3), but **very importantly**, we do not use the `new` keyword in front of them. As such, we're not creating object wrappers.
+为了在字符串和数字之前强制转换，我们使用内置的`String(..)`和`Number(..)`函数（就是我们在第三章中提到过的“native constructors”），但**非常重要的是**，我们不会在它们前面使用`new`关键字。因此，我们并不是在创建包装对象（object wrappers）。
 
-Instead, we're actually *explicitly coercing* between the two types:
+相反，我们实际上是在两个类型之间进行**显式强制转换**：
 
 ```js
 var a = 42;
@@ -472,15 +474,15 @@ b; // "42"
 d; // 3.14
 ```
 
-`String(..)` coerces from any other value to a primitive `string` value, using the rules of the `ToString` operation discussed earlier. `Number(..)` coerces from any other value to a primitive `number` value, using the rules of the `ToNumber` operation discussed earlier.
+`String(..)`将其他任何值强制转换成原始的字符串值，使用的是我们之前讨论过的`ToString`规则。`Number(..)`将其他任何值强制转换成原始的数字值，使用的是我们之前讨论过的`ToNumber`规则。
 
-I call this *explicit* coercion because in general, it's pretty obvious to most developers that the end result of these operations is the applicable type conversion.
+我把它称为**explicit** coercion，因为在一般情况下，对大多数开发者来说，这些操作的最终结果很明显，就是我们所使用的函数的类型转换结果。
 
-In fact, this usage actually looks a lot like it does in some other statically typed languages.
+事实上，这种用法看起来很像它是在其他一些静态类型语言中所做的。
 
-For example, in C/C++, you can say either `(int)x` or `int(x)`, and both will convert the value in `x` to an integer. Both forms are valid, but many prefer the latter, which kinda looks like a function call. In JavaScript, when you say `Number(x)`, it looks awfully similar. Does it matter that it's *actually* a function call in JS? Not really.
+例如，在C/C++中，你可以使用`(int)x`或`int(x)`，这二者都会将`x`中的值转换成整数。这两种形式都是有效的，但很多人喜欢后者，因为它看起来很像一个函数调用。在JavaScript中，当你使用`Number(x)`，它看起来非常相似。在JS中，它是不是一个函数调用，其实并不重要。
 
-Besides `String(..)` and `Number(..)`, there are other ways to "explicitly" convert these values between `string` and `number`:
+除了`String(..)`和`Number(..)`，还有其他的方式可以**明确地**在`string`和`number`之间进行转换。
 
 ```js
 var a = 42;
@@ -493,15 +495,15 @@ b; // "42"
 d; // 3.14
 ```
 
-Calling `a.toString()` is ostensibly explicit (pretty clear that "toString" means "to a string"), but there's some hidden implicitness here. `toString()` cannot be called on a *primitive* value like `42`. So JS automatically "boxes" (see Chapter 3) `42` in an object wrapper, so that `toString()` can be called against the object. In other words, you might call it "explicitly implicit."
+调用`a.toString()`表面上是明确的（很明显，“toString”的意思就是“to a string”），但是这里面有一些隐藏的隐式操作。**原始值**，如`42`，并不能调用`toString()`方法。因此，JS会对`42`自动“装箱”（参见第三章），转换成一个封装对象，这样这个封装对象就能调用`toString()`方法了。换句换说，你可以称之为“explicitly implicit”（显式的隐式）。
 
-`+c` here is showing the *unary operator* form (operator with only one operand) of the `+` operator. Instead of performing mathematic addition (or string concatenation -- see below), the unary `+` explicitly coerces its operand (`c`) to a `number` value.
+`+c`在这里显示了`+`操作符的**一元操作符**形式（操作符只有一个操作数）。这不是执行数学加法（或字符串拼接——见下文），一元的`+`显式的将操作数（`c`）强制转换成`number`值。
 
-Is `+c` *explicit* coercion? Depends on your experience and perspective. If you know (which you do, now!) that unary `+` is explicitly intended for `number` coercion, then it's pretty explicit and obvious. However, if you've never seen it before, it can seem awfully confusing, implicit, with hidden side effects, etc.
+`+c`是**explicit** coercion吗？取决于你的经验和观点。如果你知道（当然，你现在肯定知道了）一元的`+`是用来显式强制转成`number`，那么这是很明确和明显的。然而，如果你从来没有见过它，那它看起来就非常混乱，隐式的，带有隐藏的副作用，等等。
 
-**Note:** The generally accepted perspective in the open-source JS community is that unary `+` is an accepted form of *explicit* coercion.
+**注意：**在JS开源社区，普遍接受的观点是，一元`+`是一种可接受的**explicit** coercion的形式。
 
-Even if you really like the `+c` form, there are definitely places where it can look awfully confusing. Consider:
+即使你真的喜欢`+c`的形式，但在有些地方，它看起来非常的混乱。考虑如下：
 
 ```js
 var c = "3.14";
@@ -510,19 +512,19 @@ var d = 5+ +c;
 d; // 8.14
 ```
 
-The unary `-` operator also coerces like `+` does, but it also flips the sign of the number. However, you cannot put two `--` next to each other to unflip the sign, as that's parsed as the decrement operator. Instead, you would need to do: `- -"3.14"` with a space in between, and that would result in coercion to `3.14`.
+一元操作符`-`的强制转换功能和`+`类似，但是它会翻转数字的符号。但是，你不能把两个`--`放在一起来抵消符号翻转，因为它会被解析为递减操作符。相反，你可以使用`- -"3.14"`，在两者之间留一个空格，这个强制转换的结果是`3.14`。
 
-You can probably dream up all sorts of hideous combinations of binary operators (like `+` for addition) next to the unary form of an operator. Here's another crazy example:
+你也许能想到各种各样的二元运算符（如，用于加法运算的`+`）与一元形式的运算符的丑陋组合。下面是另一个疯狂的例子：
 
 ```js
 1 + - + + + - + 1;	// 2
 ```
 
-You should strongly consider avoiding unary `+` (or `-`) coercion when it's immediately adjacent to other operators. While the above works, it would almost universally be considered a bad idea. Even `d = +c` (or `d =+ c` for that matter!) can far too easily be confused for `d += c`, which is entirely different!
+你应该认真考虑避免使用一元`+`（或`-`）进行强制转换，当它紧靠着其他操作符的时候。尽管上述的作品能够工作，但它被普遍认为是一个坏主意。尽管`d = +c`（或`d =+ c`）很容易被混淆为`d += c`，但二者是完全不同的！
 
-**Note:** Another extremely confusing place for unary `+` to be used adjacent to another operator would be the `++` increment operator and `--` decrement operator. For example: `a +++b`, `a + ++b`, and `a + + +b`. See "Expression Side-Effects" in Chapter 5 for more about `++`.
+**注意：**另一个极为困惑的地方是，一元`+`和递增操作符`++`与递减操作符`--`相邻使用。例如：`a +++b`、`a + ++b`和`a + + +b`。参见第五章的“Expression Side-Effects”详细了解`++`。
 
-Remember, we're trying to be explicit and **reduce** confusion, not make it much worse!
+请记住，我们正在尝试变得明确，**减少**混乱，而不是使情况变得更糟糕！
 
 #### `Date` To `number`
 
