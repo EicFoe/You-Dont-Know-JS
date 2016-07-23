@@ -672,22 +672,22 @@ if (!~a.indexOf( "ol" )) {	// true
 
 ##### Truncating Bits
 
-There's one more place `~` may show up in code you run across: some developers use the double tilde `~~` to truncate the decimal part of a `number` (i.e., "coerce" it to a whole number "integer"). It's commonly (though mistakingly) said this is the same result as calling `Math.floor(..)`.
+在代码中你会遇到`~`还可能出现在一个地方：有些开发者会使用双波浪线`~~`截断数字的小数部分（即“强制”将一个数字转成“整数”）。很多人认为它和调用`Math.floor(..)`的结果是一样的（这是错误的想法）。
 
-How `~~` works is that the first `~` applies the `ToInt32` "coercion" and does the bitwise flip, and then the second `~` does another bitwise flip, flipping all the bits back to the original state. The end result is just the `ToInt32` "coercion" (aka truncation).
+`~~`的工作原理是：首先右边的`~`应用`ToInt32` “coercion”，并执行按位翻转，然后左边的`~`做第二次按位翻转，翻转所有位回到原来的状态。最终的结果是`ToInt32` “coercion”（又名截断）。
 
-**Note:** The bitwise double-flip of `~~` is very similar to the parity double-negate `!!` behavior, explained in the "Explicitly: * --> Boolean" section later.
+**注意：**`~~`的按位双翻转和双重否定`!!`的行为十分相似，我们会在之后的章节“Explicitly: * --> Boolean”详细解释。
 
-However, `~~` needs some caution/clarification. First, it only works reliably on 32-bit values. But more importantly, it doesn't work the same on negative numbers as `Math.floor(..)` does!
+然而，你需要特别小心`~~`。第一，它只在32位值上能够可靠地工作。但更重要的是，它在负数上的作用结果和`Math.floor(..)`是不一样的！
 
 ```js
 Math.floor( -49.6 );	// -50
 ~~-49.6;				// -49
 ```
 
-Setting the `Math.floor(..)` difference aside, `~~x` can truncate to a (32-bit) integer. But so does `x | 0`, and seemingly with (slightly) *less effort*.
+撇开它与`Math.floor(..)`的差异不谈，`~~x`能够截断数字成32位整数。但是`x | 0`也能做到，而且似乎花费**较少的努力**。
 
-So, why might you choose `~~x` over `x | 0`, then? Operator precedence (see Chapter 5):
+那你为什么会选择`~~x`而不是`x | 0`呢？因为**运算符优先级**（见第五章）：
 
 ```js
 ~~1E20 / 10;		// 166199296
@@ -696,7 +696,7 @@ So, why might you choose `~~x` over `x | 0`, then? Operator precedence (see Chap
 (1E20 | 0) / 10;	// 166199296
 ```
 
-Just as with all other advice here, use `~` and `~~` as explicit mechanisms for "coercion" and value transformation only if everyone who reads/writes such code is properly aware of how these operators work!
+正如这里其他方面的建议，只有当大家正确认识到这些运算符是如何工作的，才能把`~`和`~~`作为显式强制转换和值转换的机制用于你的代码中。
 
 ### Explicitly: Parsing Numeric Strings
 
