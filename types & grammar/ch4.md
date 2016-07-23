@@ -572,15 +572,15 @@ if (!Date.now) {
 
 #### The Curious Case of the `~`
 
-One coercive JS operator that is often overlooked and usually very confused is the tilde `~` operator (aka "bitwise NOT"). Many of those who even understand what it does will often times still want to avoid it. But sticking to the spirit of our approach in this book and series, let's dig into it to find out if `~` has anything useful to give us.
+一个常常被忽视，通常令人感到困惑的JS强制操作的运算符，是波浪`~`操作符（又名“按位非”）。很多的人，甚至明白它的作用，在很多时候还是想避免它。但坚持我们在这本书和本系列的精神，让我们深入进去，看看`~`有没有给我们什么有用的东西。
 
-In the "32-bit (Signed) Integers" section of Chapter 2, we covered how bitwise operators in JS are defined only for 32-bit operations, which means they force their operands to conform to 32-bit value representations. The rules for how this happens are controlled by the `ToInt32` abstract operation (ES5 spec, section 9.5).
+在第二章的“32-bit (Signed) Integers”这节，我们讨论了在JS中位运算符只在32位运算中被定义了，这意味着它们会迫使它们的操作数符合32位值的表示。如何发生这些操作的规则，是由`ToInt32`抽象操作控制的（ES5规范，第9.5节）。
 
-`ToInt32` first does a `ToNumber` coercion, which means if the value is `"123"`, it's going to first become `123` before the `ToInt32` rules are applied.
+`ToInt32`首先做了`ToNumber` coercion，这意味着如果值是`"123"`，它首先会转成`123`，然后再应用`ToInt32`的规则。
 
-While not *technically* coercion itself (since the type doesn't change!), using bitwise operators (like `|` or `~`) with certain special `number` values produces a coercive effect that results in a different `number` value.
+**技术上来说**，这并不是coercion（因为类型没有发生改变！），在某些特殊`number`值上，使用位运算符（如`|`或`~`）会产生一种强制转换的效果，从而产生一个不同的`number`值。
 
-For example, let's first consider the `|` "bitwise OR" operator used in the otherwise no-op idiom `0 | x`, which (as Chapter 2 showed) essentially only does the `ToInt32` conversion:
+例如，让我们先考虑“按位或”`|`运算符，它的一个惯用语法是`0 | x`，它（正如第二章说展示的）基本上只做了`ToInt32`转换：
 
 ```js
 0 | -0;			// 0
@@ -589,35 +589,37 @@ For example, let's first consider the `|` "bitwise OR" operator used in the othe
 0 | -Infinity;	// 0
 ```
 
-These special numbers aren't 32-bit representable (since they come from the 64-bit IEEE 754 standard -- see Chapter 2), so `ToInt32` just specifies `0` as the result from these values.
+这些特殊数字不是32位表示的（因为它们来自64位 IEEE 754标准——见第二章），因此`ToInt32`只是指定`0`作为这些数字的返回值。
 
-It's debatable if `0 | __` is an *explicit* form of this coercive `ToInt32` operation or if it's more *implicit*. From the spec perspective, it's unquestionably *explicit*, but if you don't understand bitwise operations at this level, it can seem a bit more *implicitly* magical. Nevertheless, consistent with other assertions in this chapter, we will call it *explicit*.
+`0 | __`这种强制转换的`ToInt32`操作，是**显式的**，还是**隐式的**，这一点值得商榷。从规范的角度看，这毫无疑问是**显式的**，但是如果你不了解这个级别的位运算，那它看起来是更加的**隐式**，更加的神奇。尽管如此，为保持与本章其他的断言一致，我们把它称为**显式的**。
 
-So, let's turn our attention back to `~`. The `~` operator first "coerces" to a 32-bit `number` value, and then performs a bitwise negation (flipping each bit's parity).
+让我们把注意力转回到`~`。`~`运算符首先“强制转换”成32位`number`值，然后执行按位非（翻转每个位的奇偶）。
 
-**Note:** This is very similar to how `!` not only coerces its value to `boolean` but also flips its parity (see discussion of the "unary `!`" later).
+**注意：**这跟`!`的操作很相似，`!`不仅将值强制转成`boolean`，还会翻转它的奇偶位（见后面的讨论，“unary `!`”）。
 
-But... what!? Why do we care about bits being flipped? That's some pretty specialized, nuanced stuff. It's pretty rare for JS developers to need to reason about individual bits.
+但是，我们为什么要关心位的翻转？这是一些非常专业化，细致入微的东西。对JS开发者来说，需要推理各个位是非常罕见的。
 
-Another way of thinking about the definition of `~` comes from old-school computer science/discrete Mathematics: `~` performs two's-complement. Great, thanks, that's totally clearer!
+换一种方式思考`~`，来自老牌的计算机科学或离散数学的定义：`~`执行执行二进制补码。太好了，谢谢，这样理解就很清晰了！
 
-Let's try again: `~x` is roughly the same as `-(x+1)`. That's weird, but slightly easier to reason about. So:
+让我们再试一次：`~x`和`-(x+1)`是大致相同的。这很奇怪，但是比较容易推理。如：
 
 ```js
 ~42;	// -(42+1) ==> -43
 ```
 
-You're probably still wondering what the heck all this `~` stuff is about, or why it really matters for a coercion discussion. Let's quickly get to the point.
+你可能仍然不知道到底这一切`~`东西是什么，或者为什么在讨论coercion的时候讨论它。让我们快速切入主题：）
 
-Consider `-(x+1)`. What's the only value that you can perform that operation on that will produce a `0` (or `-0` technically!) result? `-1`. In other words, `~` used with a range of `number` values will produce a falsy (easily coercible to `false`) `0` value for the `-1` input value, and any other truthy `number` otherwise.
+考虑`-(x+1)`。哪个值能够通过这个操作产生结果`0`（技术上讲应该是`-0`）？`-1`。换句话说，`~`与`number`值一起使用，对于数字`-1`会产生一个falsy（可以被强制转成`false`）的`0`值，对于其他数字，会产生一个truthy的`number`。
 
-Why is that relevant?
+这和我们的疑问有什么关联吗？
 
 `-1` is commonly called a "sentinel value," which basically means a value that's given an arbitrary semantic meaning within the greater set of values of its same type (`number`s). The C-language uses `-1` sentinel values for many functions that return `>= 0` values for "success" and `-1` for "failure."
 
-JavaScript adopted this precedent when defining the `string` operation `indexOf(..)`, which searches for a substring and if found returns its zero-based index position, or `-1` if not found.
+`-1`通常称为“标记值”（“sentinel value”），这意味着比它同类型（`number`）的值多给了它一个任意语义的值。C语言在很多函数中使用了`-1`标记值，返回`>= 0`的值表示操作成功，返回`-1`表示操作失败。
 
-It's pretty common to try to use `indexOf(..)` not just as an operation to get the position, but as a `boolean` check of presence/absence of a substring in another `string`. Here's how developers usually perform such checks:
+JavaScript在定义字符串操作`indexOf(..)`的时候采取了这种先例，当它搜索一个子串，如果找到就返回它从0开始的索引位置，没找到就返回`-1`。
+
+尝试使用`indexOf(..)`不只是作为获取位置的操作，还可以做一个布尔检查，判断一个字符串是否在另一个字符串当中，这种做法很常见。以下是开发者经常做的检测：
 
 ```js
 var a = "Hello World";
@@ -637,9 +639,11 @@ if (a.indexOf( "ol" ) == -1) {	// true
 }
 ```
 
-I find it kind of gross to look at `>= 0` or `== -1`. It's basically a "leaky abstraction," in that it's leaking underlying implementation behavior -- the usage of sentinel `-1` for "failure" -- into my code. I would prefer to hide such a detail.
+当我看到`>= 0`或`== -1`总感觉很恶心。这是一种“抽象泄漏”，因为在我的代码中，它泄漏了底层实现的行为——使用`-1`标记“失败”。我更喜欢隐藏这种实现细节。
 
 And now, finally, we see why `~` could help us! Using `~` with `indexOf()` "coerces" (actually just transforms) the value **to be appropriately `boolean`-coercible**:
+
+而现在，我们终于明白为什么`~`可以帮助我们！使用`~`和`indexOf()`把值“强制转换”（其实只是变换）成**合适的`boolean`**：
 
 ```js
 var a = "Hello World";
@@ -658,13 +662,13 @@ if (!~a.indexOf( "ol" )) {	// true
 }
 ```
 
-`~` takes the return value of `indexOf(..)` and transforms it: for the "failure" `-1` we get the falsy `0`, and every other value is truthy.
+`~`将`indexOf(..)`的返回值进行转换：对于“失败”的`-1`我们得到了falsy值`0`，而其他的值都是truthy。
 
-**Note:** The `-(x+1)` pseudo-algorithm for `~` would imply that `~-1` is `-0`, but actually it produces `0` because the underlying operation is actually bitwise, not mathematic.
+**注意：**伪算法`-(x+1)`只是意味着`~-1`的结果是`-0`，但实际上它会得到`0`是因为底层的操作实际上是位运算，而不是数学运算。
 
-Technically, `if (~a.indexOf(..))` is still relying on *implicit* coercion of its resultant `0` to `false` or nonzero to `true`. But overall, `~` still feels to me more like an *explicit* coercion mechanism, as long as you know what it's intended to do in this idiom.
+从技术上讲，`if (~a.indexOf(..))`仍然是依靠**implicit** coercion，将`0`转成`false`，或将非零转成`true`。但总体而言，对我来说`~`更像是一个**explicit** coercion机制，只要你知道这种语法形式是要做什么。
 
-I find this to be cleaner code than the previous `>= 0` / `== -1` clutter.
+相比之前的`>= 0` / `== -1`的杂乱，我觉得现在的代码更整洁。
 
 ##### Truncating Bits
 
