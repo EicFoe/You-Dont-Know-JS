@@ -702,7 +702,9 @@ Math.floor( -49.6 );	// -50
 
 A similar outcome to coercing a `string` to a `number` can be achieved by parsing a `number` out of a `string`'s character contents. There are, however, distinct differences between this parsing and the type conversion we examined above.
 
-Consider:
+类似的结果在强制将`string`转成`number`时，可以通过从一个`string`字符内容中解析出一个`number`来实现。这种解析和我们上面提到的类型转换之间有明显的差异。
+
+考虑如下：
 
 ```js
 var a = "42";
@@ -715,21 +717,21 @@ Number( b );	// NaN
 parseInt( b );	// 42
 ```
 
-Parsing a numeric value out of a string is *tolerant* of non-numeric characters -- it just stops parsing left-to-right when encountered -- whereas coercion is *not tolerant* and fails resulting in the `NaN` value.
+从字符串中解析出数字，能够容忍非数字字符的存在——它只是从左到右开始解析，遇到非数字字符就停止解析——而coercion**无法容忍**非数字，所以会失败，产生结果值`NaN`。
 
-Parsing should not be seen as a substitute for coercion. These two tasks, while similar, have different purposes. Parse a `string` as a `number` when you don't know/care what other non-numeric characters there may be on the right-hand side. Coerce a `string` (to a `number`) when the only acceptable values are numeric and something like `"42px"` should be rejected as a `number`.
+解析不应该被看作是coercion的替代品。这两个任务，尽管很相似，但有不同的用途。当你不知道或不关心可能出现在右边的非数字字符，你就可以从一个`string`中解析出`number`。强制`string`转成`number`是在可接受的值只有数字的情况下使用，像`"42px"`这种字符串应该直接拒绝转成`number`。
 
-**Tip:** `parseInt(..)` has a twin, `parseFloat(..)`, which (as it sounds) pulls out a floating-point number from a string.
+**提示：**`parseInt(..)`有一个双胞胎，`parseFloat(..)`，它能从一个字符串中解析出浮点数。
 
-Don't forget that `parseInt(..)` operates on `string` values. It makes absolutely no sense to pass a `number` value to `parseInt(..)`. Nor would it make sense to pass any other type of value, like `true`, `function(){..}` or `[1,2,3]`.
+不要忘了`parseInt(..)`只对`string`值进行操作。传递一个`number`值给`parseInt(..)`是完全没有意义的。同理，传递其他类型的值，如`true`、`function(){..}`或`[1,2,3]`，也是没意义的。
 
-If you pass a non-`string`, the value you pass will automatically be coerced to a `string` first (see "`ToString`" earlier), which would clearly be a kind of hidden *implicit* coercion. It's a really bad idea to rely upon such a behavior in your program, so never use `parseInt(..)` with a non-`string` value.
+如果你传递一个非字符串，这个值首先会被自动强制转成字符串（参见前面的“`ToString`”），这显然是一个隐藏的**implicit** coercion。让你的程序依赖这样一个行为，这是一个非常糟糕的主意，所以千万不要传递非字符串值给`parseInt(..)`。
 
-Prior to ES5, another gotcha existed with `parseInt(..)`, which was the source of many JS programs' bugs. If you didn't pass a second argument to indicate which numeric base (aka radix) to use for interpreting the numeric `string` contents, `parseInt(..)` would look at the beginning character(s) to make a guess.
+ES5之前，`parseInt(..)`存在一个神坑，它是很多JS程序bug的根源。如果你没有传递第二个参数来指定数字的基数（即指定数字是多少进制），用于解析数字字符串内容，`parseInt(..)`会检测开始的字符进行推测。
 
-If the first two characters were `"0x"` or `"0X"`, the guess (by convention) was that you wanted to interpret the `string` as a hexadecimal (base-16) `number`. Otherwise, if the first character was `"0"`, the guess (again, by convention) was that you wanted to interpret the `string` as an octal (base-8) `number`.
+如果前两个字符是`"0x"`或`"0X"`，它会猜测（按照约定）你想解释字符串为十六进制数字。否则，如果第一个字符是`"0"`，它会猜测（再次，按照约定）你想解释字符串为八进制数字。
 
-Hexadecimal `string`s (with the leading `0x` or `0X`) aren't terribly easy to get mixed up. But the octal number guessing proved devilishly common. For example:
+十六进制字符串（以`0x`或`0X`开头）并不容易搞混。但是八进制猜测被证明是十分容易搞混。例如：
 
 ```js
 var hour = parseInt( selectedHour.value );
@@ -738,16 +740,16 @@ var minute = parseInt( selectedMinute.value );
 console.log( "The time you selected was: " + hour + ":" + minute);
 ```
 
-Seems harmless, right? Try selecting `08` for the hour and `09` for the minute. You'll get `0:0`. Why? because neither `8` nor `9` are valid characters in octal base-8.
+似乎人畜无害的，对不对？请尝试选择`08`作为小时和`09`作为分钟。你会得到`0:0`。为什么？因为在八进制中，`8`和`9`都不是有效的字符。
 
-The pre-ES5 fix was simple, but so easy to forget: **always pass `10` as the second argument**. This was totally safe:
+在ES5之前，修复这个bug也很简单，但也很容易忘记：**总是传递`10`作为第二个参数**。这是完全安全的：
 
 ```js
 var hour = parseInt( selectedHour.value, 10 );
 var minute = parseInt( selectedMiniute.value, 10 );
 ```
 
-As of ES5, `parseInt(..)` no longer guesses octal. Unless you say otherwise, it assumes base-10 (or base-16 for `"0x"` prefixes). That's much nicer. Just be careful if your code has to run in pre-ES5 environments, in which case you still need to pass `10` for the radix.
+在ES5中，`parseInt(..)`不会再猜测八进制了。除非你指定，否则，它假定是十进制（前缀是`"0x"`就假定为十六进制）。这就好多了。如果你的代码运行在ES5之前的环境中，你需要特别小心，在这种情况下，你仍然需要传递`10`作为基数。
 
 #### Parsing Non-Strings
 
