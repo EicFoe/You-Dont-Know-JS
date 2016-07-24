@@ -755,27 +755,29 @@ var minute = parseInt( selectedMiniute.value, 10 );
 
 One somewhat infamous example of `parseInt(..)`'s behavior is highlighted in a sarcastic joke post a few years ago, poking fun at this JS behavior:
 
+关于`parseInt(..)`的行为，有一个有点臭名昭著的例子，几年前被张贴出来突出的讽刺笑话它，调侃JS的这个行为：
+
 ```js
 parseInt( 1/0, 19 ); // 18
 ```
 
-The assumptive (but totally invalid) assertion was, "If I pass in Infinity, and parse an integer out of that, I should get Infinity back, not 18." Surely, JS must be crazy for this outcome, right?
+这个假想的断言（但完全错误的）是：“如果我传递Infinity进去，从中解析出的整数，也应该是Infinity，而不是18。”所以，JS肯定是疯了才会得到这个结果，对吗？
 
-Though this example is obviously contrived and unreal, let's indulge the madness for a moment and examine whether JS really is that crazy.
+尽管这个例子显然是人为的且不真实的，让我们纵情疯狂一会儿，然后再检查看看JS是否真的疯了。
 
-First off, the most obvious sin committed here is to pass a non-`string` to `parseInt(..)`. That's a no-no. Do it and you're asking for trouble. But even if you do, JS politely coerces what you pass in into a `string` that it can try to parse.
+首先，在这里犯下的最明显的罪是传递一个非字符串给`parseInt(..)`。这是一个禁忌。打破这个规则，你是在自找麻烦。但是，即使你这么做，JS还是会礼貌地将你传递进来的非字符串强制转成字符串，这样它就可以尝试解析。
 
-Some would argue that this is unreasonable behavior, and that `parseInt(..)` should refuse to operate on a non-`string` value. Should it perhaps throw an error? That would be very Java-like, frankly. I shudder at thinking JS should start throwing errors all over the place so that `try..catch` is needed around almost every line.
+有人会说这是不合理的行为，`parseInt(..)`应该拒绝操作非字符串值。它也许应该抛出一个错误？坦率地说，这很Java（译者注：Java默默躺枪）。我不敢想象JS应该开始遍地抛出错误，这样`try..catch`就围绕在每行所需要的地方。
 
-Should it return `NaN`? Maybe. But... what about:
+也许它应该返回`NaN`？不然应该是什么：
 
 ```js
 parseInt( new String( "42") );
 ```
 
-Should that fail, too? It's a non-`string` value. If you want that `String` object wrapper to be unboxed to `"42"`, then is it really so unusual for `42` to first become `"42"` so that `42` can be parsed back out?
+这个也会失败吗？它是一个非字符串值。你希望这个`String`包装对象可以拆箱为`"42"`，然后很自然地，`42`就可以从字符串`"42"`中解析出来，对吗？
 
-I would argue that this half-*explicit*, half-*implicit* coercion that can occur can often be a very helpful thing. For example:
+我认为这种半**explicit**，半**implicit** coercion可以出现，往往是一个非常有用的事情。例如：
 
 ```js
 var a = {
@@ -786,19 +788,19 @@ var a = {
 parseInt( a ); // 42
 ```
 
-The fact that `parseInt(..)` forcibly coerces its value to a `string` to perform the parse on is quite sensible. If you pass in garbage, and you get garbage back out, don't blame the trash can -- it just did its job faithfully.
+`parseInt(..)`强行将它的值转成字符串然后再执行解析，事实上这是非常明智的。如果你传递垃圾进去，你也会得到一个垃圾，这不怪垃圾桶——它只是忠实地做了它的工作。
 
-So, if you pass in a value like `Infinity` (the result of `1 / 0` obviously), what sort of `string` representation would make the most sense for its coercion? Only two reasonable choices come to mind: `"Infinity"` and `"∞"`. JS chose `"Infinity"`. I'm glad it did.
+所以，如果你传递`Infinity`（`1 / 0`的结果很明显是它），把它强制转成什么字符串最有意义？浮现在你脑海中的只有两种合理的选择：`"Infinity"`和`"∞"`。JS选择了`"Infinity"`。它这么做我很高兴。
 
-I think it's a good thing that **all values** in JS have some sort of default `string` representation, so that they aren't mysterious black boxes that we can't debug and reason about.
+我认为，在JS中**所有的值**都具有某种默认的字符串表示，这是件好事。这样它们就不再是神秘的黑盒子，（黑盒子）让我们不能调试和推理。
 
-Now, what about base-19? Obviously, completely bogus and contrived. No real JS programs use base-19. It's absurd. But again, let's indulge the ridiculousness. In base-19, the valid numeric characters are `0` - `9` and `a` - `i` (case insensitive).
+现在，讨论下什么是19进制？显然，这完全是虚假和做作。哪个JS程序会使用19进制。这是荒谬的。但同样，让我们先沉浸在荒谬中。在19进制中，有效的数字字符是`0` - `9`和`a` - `i`（不区分大小写）。
 
-So, back to our `parseInt( 1/0, 19 )` example. It's essentially `parseInt( "Infinity", 19 )`. How does it parse? The first character is `"I"`, which is value `18` in the silly base-19. The second character `"n"` is not in the valid set of numeric characters, and as such the parsing simply politely stops, just like when it ran across `"p"` in `"42px"`.
+所以，回到我们的例子`parseInt( 1/0, 19 )`。它本质上是`parseInt( "Infinity", 19 )`。它是如何解析的呢？第一个字符是`"I"`，在愚蠢的19进制中，它代表（十进制数字）`18`。第二个字符是`"n"`，它不是有效的19进制字符，因此，解析礼貌地停止了，就像它在`"42px"`中遇到`"p"`一样。
 
-The result? `18`. Exactly like it sensibly should be. The behaviors involved to get us there, and not to an error or to `Infinity` itself, are **very important** to JS, and should not be so easily discarded.
+结果是？`18`。正如我们所猜想的那样。涉及到的这种行为，引导我们到这里，而不是抛出错误或返回`Infinity`本身，对JS来说是**非常重要的**，而且不应该如此轻易地丢弃它。
 
-Other examples of this behavior with `parseInt(..)` that may be surprising but are quite sensible include:
+这里还有一些关于`parseInt(..)`的行为可能令人吃惊但非常明智的例子，包括但不限于如下：
 
 ```js
 parseInt( 0.000008 );		// 0   ("0" from "0.000008")
@@ -810,7 +812,7 @@ parseInt( "0x10" );			// 16
 parseInt( "103", 2 );		// 2
 ```
 
-`parseInt(..)` is actually pretty predictable and consistent in its behavior. If you use it correctly, you'll get sensible results. If you use it incorrectly, the crazy results you get are not the fault of JavaScript.
+`parseInt(..)`的行为实际上是非常可预测的，它与其行为始终保持一致。如果你正确地使用它，你会得到有意义的结果。如果你错误地使用它，你会得到疯狂的结果，但这不是JavaScript的错。
 
 ### Explicitly: * --> Boolean
 
