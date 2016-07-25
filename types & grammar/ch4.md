@@ -816,9 +816,9 @@ parseInt( "103", 2 );		// 2
 
 ### Explicitly: * --> Boolean
 
-Now, let's examine coercing from any non-`boolean` value to a `boolean`.
+现在，让我们看看非`boolean`值如何强制转成`boolean`。
 
-Just like with `String(..)` and `Number(..)` above, `Boolean(..)` (without the `new`, of course!) is an explicit way of forcing the `ToBoolean` coercion:
+就像上面的`String(..)`和`Number(..)`，`Boolean(..)`（当然不用加上`new`）也是一种显式的方式进行`ToBoolean`强制转换：
 
 ```js
 var a = "0";
@@ -840,9 +840,9 @@ Boolean( f ); // false
 Boolean( g ); // false
 ```
 
-While `Boolean(..)` is clearly explicit, it's not at all common or idiomatic.
+虽然`Boolean(..)`显然是 explicit，但是它并不常见或惯用。
 
-Just like the unary `+` operator coerces a value to a `number` (see above), the unary `!` negate operator explicitly coerces a value to a `boolean`. The *problem* is that it also flips the value from truthy to falsy or vice versa. So, the most common way JS developers explicitly coerce to `boolean` is to use the `!!` double-negate operator, because the second `!` will flip the parity back to the original:
+就像一元`+`运算符强制将一个值转成`number`（见上文），一元`!`否定运算符显式地将值强制转成`boolean`。**问题**是它同时也把值从truthy转成falsy，反之亦然。因此，最常见的方法是，JS开发者使用双重否定运算符`!!`显式将值强制转成`boolean`，因为第二个`!`会将奇偶位翻转回原来的样子！
 
 ```js
 var a = "0";
@@ -866,7 +866,9 @@ var g;
 
 Any of these `ToBoolean` coercions would happen *implicitly* without the `Boolean(..)` or `!!`, if used in a `boolean` context such as an `if (..) ..` statement. But the goal here is to explicitly force the value to a `boolean` to make it clearer that the `ToBoolean` coercion is intended.
 
-Another example use-case for explicit `ToBoolean` coercion is if you want to force a `true`/`false` value coercion in the JSON serialization of a data structure:
+如果值被用于`boolean`上下文（比如`if (..) ..`语句），不使用`Boolean(..)`或`!!`，任何的`ToBoolean` coercions都可能**隐式的**发生。但是这里的目标是将值显式的强制转成`boolean`，以便更清楚地表明`ToBoolean` coercion的意图。
+
+Explicit `ToBoolean` coercion 的另外一个例子是，在JSON序列化一个数据结构时，强制将值转成`true`/`false`：
 
 ```js
 var a = [
@@ -890,7 +892,7 @@ JSON.stringify( a, function(key,val){
 // "[1,true,2,true]"
 ```
 
-If you come to JavaScript from Java, you may recognize this idiom:
+如果你学过Java，你可能会认出这种惯用语法：
 
 ```js
 var a = 42;
@@ -898,13 +900,13 @@ var a = 42;
 var b = a ? true : false;
 ```
 
-The `? :` ternary operator will test `a` for truthiness, and based on that test will either assign `true` or `false` to `b`, accordingly.
+三元运算符`? :`会测试`a`的真假，并且根据测试的结果来决定分配`true`或`false`给`b`。
 
-On its surface, this idiom looks like a form of *explicit* `ToBoolean`-type coercion, since it's obvious that only either `true` or `false` come out of the operation.
+表面上看，这个惯用语法好像是**显式的**`ToBoolean`类型强制转换的一种形式，因为很明显，这个操作的结果只能是`true`或`false`。
 
-However, there's a hidden *implicit* coercion, in that the `a` expression has to first be coerced to `boolean` to perform the truthiness test. I'd call this idiom "explicitly implicit." Furthermore, I'd suggest **you should avoid this idiom completely** in JavaScript. It offers no real benefit, and worse, masquerades as something it's not.
+然而，这里有个隐藏的**implicit** coercion，就是表达式`a`首先必须强制转成`boolean`才能进行真假测试。我把这种语法称为“explicitly implicit”。此外，我建议你在JavaScript中**应该完全避免这种语法**。它没有提供真正的好处，更糟糕的是，伪装成某些它不是的东西。
 
-`Boolean(a)` and `!!a` are far better as *explicit* coercion options.
+`Boolean(a)`和`!!a`比**explicit** coercion的众多选项要好得多。
 
 ## Implicit Coercion
 
