@@ -936,15 +936,15 @@ Let's define the goal of *implicit* coercion as: to reduce verbosity, boilerplat
 
 ### Simplifying Implicitly
 
-Before we even get to JavaScript, let me suggest something pseudo-code'ish from some theoretical strongly typed language to illustrate:
+在我们开始讲解JavaScript之前，让我用一些理论上的强类型语言的伪代码来阐述一些东西：
 
 ```js
 SomeType x = SomeType( AnotherType( y ) )
 ```
 
-In this example, I have some arbitrary type of value in `y` that I want to convert to the `SomeType` type. The problem is, this language can't go directly from whatever `y` currently is to `SomeType`. It needs an intermediate step, where it first converts to `AnotherType`, and then from `AnotherType` to `SomeType`.
+在这里例子中，我有个任意类型的值存储在`y`中，我想把它转成`SomeType`类型。问题是，这种语言不能从任意类型直接转成`SomeType`类型。它需要一个中间步骤，先将`y`的值转成`AnotherType`，然后再将`AnotherType`转成`SomeType`。
 
-Now, what if that language (or definition you could create yourself with the language) *did* just let you say:
+现在，如果有门语言（你也可以创建直接的语言）能够让你这么**做**：
 
 ```js
 SomeType x = SomeType( y )
@@ -952,17 +952,21 @@ SomeType x = SomeType( y )
 
 Wouldn't you generally agree that we simplified the type conversion here to reduce the unnecessary "noise" of the intermediate conversion step? I mean, is it *really* all that important, right here at this point in the code, to see and deal with the fact that `y` goes to `AnotherType` first before then going to `SomeType`?
 
+我们简化了这里的类型转换，以减少中间转换步骤带来的“噪音”，你认同这个观点吗？我的意思是，知道将`y`转成`SomeType`之前先要将它转成`AnotherType`这个事实，是不是真的很重要？
+
 Some would argue, at least in some circumstances, yes. But I think an equal argument can be made of many other circumstances that here, the simplification **actually aids in the readability of the code** by abstracting or hiding away such details, either in the language itself or in our own abstractions.
 
-Undoubtedly, behind the scenes, somewhere, the intermediate conversion step is still happening. But if that detail is hidden from view here, we can just reason about getting `y` to type `SomeType` as an generic operation and hide the messy details.
+有人会说，至少在某些情况下，是这样的。但我认为在其他情况下有相同的争论，我们可以通过抽象或隐藏这样的细节来**提高代码的可读性**，无论是在语言本身还是我们自己的抽象中。
 
-While not a perfect analogy, what I'm going to argue throughout the rest of this chapter is that JS *implicit* coercion can be thought of as providing a similar aid to your code.
+毫无疑问，在幕后的某个地方，中间转换步骤仍然在进行之中。但是，如果这个细节在这里隐藏了，我们可以正当把`y`转成类型`SomeType`作为一个通用的操作，隐藏这些繁琐的细节。
 
-But, **and this is very important**, that is not an unbounded, absolute statement. There are definitely plenty of *evils* lurking around *implicit* coercion, that will harm your code much more than any potential readability improvements. Clearly, we have to learn how to avoid such constructs so we don't poison our code with all manner of bugs.
+虽然不是一个完美的比喻，我在本章剩余部分会一直辩论，JS的**implicit** coercion为你的代码提供了类似的援助。
 
-Many developers believe that if a mechanism can do some useful thing **A** but can also be abused or misused to do some awful thing **Z**, then we should throw out that mechanism altogether, just to be safe.
+但是，**非常重要的是**，这不是一个绝对的说法。在**implicit** coercion周围肯定潜伏着很多的“弊端”，它们会损害你的代码胜于提高代码的可读性。显然，我们必须学会如何避免这样的构造，这样我们就不会用各种bugs来毒害我们的代码。
 
-My encouragement to you is: don't settle for that. Don't "throw the baby out with the bathwater." Don't assume *implicit* coercion is all bad because all you think you've ever seen is its "bad parts." I think there are "good parts" here, and I want to help and inspire more of you to find and embrace them!
+许多开发者认为，如果某个机制可以做一些有用的事情**A**，但也可以滥用或误用，做一些可怕的事情**Z**，那么为了保持安全，我们就应该彻底抛弃这一机制。
+
+我鼓励你不要满足于这一点。不要“把婴儿和洗澡水一起倒掉。”不要因为你见过**implicit** coercion “不好的部分”就认为它所有的都是不好的。我认为它也有“好的部分”，并且，我想帮助和激励更多的你们去找到并拥抱它们！
 
 ### Implicitly: Strings <--> Numbers
 
