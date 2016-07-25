@@ -912,21 +912,27 @@ var b = a ? true : false;
 
 *Implicit* coercion refers to type conversions that are hidden, with non-obvious side-effects that implicitly occur from other actions. In other words, *implicit coercions* are any type conversions that aren't obvious (to you).
 
-While it's clear what the goal of *explicit* coercion is (making code explicit and more understandable), it might be *too* obvious that *implicit* coercion has the opposite goal: making code harder to understand.
+**Implicit** coercion 是指在一些其他操作中隐式的发生类型转换，且没有明显的副作用。换句话说，**implicit coercions**是指对你来说不明显的任何类型转换。
 
-Taken at face value, I believe that's where much of the ire towards coercion comes from. The majority of complaints about "JavaScript coercion" are actually aimed (whether they realize it or not) at *implicit* coercion.
+**explicit** coercion 的目标是很明显的（使代码明确，更容易理解），而**implicit** coercion的目标则明显相反：使代码更难理解。
 
-**Note:** Douglas Crockford, author of *"JavaScript: The Good Parts"*, has claimed in many conference talks and writings that JavaScript coercion should be avoided. But what he seems to mean is that *implicit* coercion is bad (in his opinion). However, if you read his own code, you'll find plenty of examples of coercion, both *implicit* and *explicit*! In truth, his angst seems to primarily be directed at the `==` operation, but as you'll see in this chapter, that's only part of the coercion mechanism.
+从表面上看，我认为这就是大部分针对 coercion 忿怒的来源。大多数对于“JavaScript coercion”的抱怨主要是针对**implicit** coercion。
 
-So, **is implicit coercion** evil? Is it dangerous? Is it a flaw in JavaScript's design? Should we avoid it at all costs?
+**注意：**Douglas Crockford，**“JavaScript: The Good Parts”**（《JavaScript精粹》）的作者，在很多的会议和著作中都宣称应该尽量避免JavaScript coercion。但他的意思似乎是**implicit** coercion是不好的（他自己是这么认为的）。然而，如果你看过他的代码，你会发现很多coercion的例子，**implicit**和**explicit**都有！事实上，他的忧虑似乎主要针对`==`操作，但是正如你在本章中所看到的，这只是coercion机制的一部分。
 
-I bet most of you readers are inclined to enthusiastically cheer, "Yes!"
+所以，**implicit coercion**是邪恶的吗？危险吗？它是JavaScript的设计缺陷？我们应该不惜一切代码避免它吗？
 
-**Not so fast.** Hear me out.
+我敢打赌，你们中的大多数读者都倾向于热烈欢呼，“是的！”
+
+**别这么着急下结论。**且听我慢慢道来。
 
 Let's take a different perspective on what *implicit* coercion is, and can be, than just that it's "the opposite of the good explicit kind of coercion." That's far too narrow and misses an important nuance.
 
+让我们换个角度来看**implicit** coercion是什么，而不是仅仅认为它是“好的explicit coercion的对立面。”这过于狭隘，而且会错过一个重要的细微之处。
+
 Let's define the goal of *implicit* coercion as: to reduce verbosity, boilerplate, and/or unnecessary implementation detail that clutters up our code with noise that distracts from the more important intent.
+
+我们定义**implicit** coercion的目标是：减少冗余，样板代码和不必要的实现细节，这些噪声代码会让我们从更重要的意图那分心。
 
 ### Simplifying Implicitly
 
