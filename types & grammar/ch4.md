@@ -944,7 +944,7 @@ SomeType x = SomeType( AnotherType( y ) )
 
 在这里例子中，我有个任意类型的值存储在`y`中，我想把它转成`SomeType`类型。问题是，这种语言不能从任意类型直接转成`SomeType`类型。它需要一个中间步骤，先将`y`的值转成`AnotherType`，然后再将`AnotherType`转成`SomeType`。
 
-现在，如果有门语言（你也可以创建直接的语言）能够让你这么**做**：
+现在，如果有门语言（你也可以创建这样的语言）能够让你这么**做**：
 
 ```js
 SomeType x = SomeType( y )
@@ -972,7 +972,9 @@ Some would argue, at least in some circumstances, yes. But I think an equal argu
 
 Earlier in this chapter, we explored *explicitly* coercing between `string` and `number` values. Now, let's explore the same task but with *implicit* coercion approaches. But before we do, we have to examine some nuances of operations that will *implicitly* force coercion.
 
-The `+` operator is overloaded to serve the purposes of both `number` addition and `string` concatenation. So how does JS know which type of operation you want to use? Consider:
+在本章前面，我们探索了在字符串和数字之间的显式转换。现在，让我们用**implicit** coercion的方法来探索同样的事情。但在此之前，我们需要检查一些运算符的细微差别，它们会进行隐式的强制转换。
+
+`+`操作符被重载同时用于数字加法和字符串拼接。那JS如何知道你想要使用哪种类型的操作？考虑如下：
 
 ```js
 var a = "42";
@@ -987,7 +989,9 @@ c + d; // 42
 
 What's different that causes `"420"` vs `42`? It's a common misconception that the difference is whether one or both of the operands is a `string`, as that means `+` will assume `string` concatenation. While that's partially true, it's more complicated than that.
 
-Consider:
+是什么差别产生了`"420"`与`42`这俩不同的结果？最常见的一个误解是，二者的不同在于操作数中是否含有（一个或两个都是）字符串，有的话意味着`+`将执行字符串拼接。这种说法部分正确，但事实比这更复杂。
+
+考虑如下：
 
 ```js
 var a = [1,2];
@@ -996,25 +1000,29 @@ var b = [3,4];
 a + b; // "1,23,4"
 ```
 
-Neither of these operands is a `string`, but clearly they were both coerced to `string`s and then the `string` concatenation kicked in. So what's really going on?
+两个操作数都不是字符串，但是很明显它们都被强制转成字符串，然后执行字符串拼接操作。那么，这到底是怎么回事？
 
-(**Warning:** deeply nitty gritty spec-speak coming, so skip the next two paragraphs if that intimidates you!)
+（**警告：**接下来会从规范角度来深入探讨这个细节问题，如果你被吓到了，请跳过下面两段）
 
 -----
 
 According to ES5 spec section 11.6.1, the `+` algorithm (when an `object` value is an operand) will concatenate if either operand is either already a `string`, or if the following steps produce a `string` representation. So, when `+` receives an `object` (including `array`) for either operand, it first calls the `ToPrimitive` abstract operation (section 9.1) on the value, which then calls the `[[DefaultValue]]` algorithm (section 8.12.8) with a context hint of `number`.
 
+根据ES5规范第11.6.1节，`+`运算符的操作数，只要有一个是字符串或者通过某些步骤能够得到一个字符串，它就会执行字符串拼接操作。所以当`+`的操作数是对象（包括数组），它首先会对这个值调用`ToPrimitive`抽象操作（第9.1节），然后尝试用数字上下文提示来调用`[[DefaultValue]]`算法。
+
 If you're paying close attention, you'll notice that this operation is now identical to how the `ToNumber` abstract operation handles `object`s (see the "`ToNumber`"" section earlier). The `valueOf()` operation on the `array` will fail to produce a simple primitive, so it then falls to a `toString()` representation. The two `array`s thus become `"1,2"` and `"3,4"`, respectively. Now, `+` concatenates the two `string`s as you'd normally expect: `"1,23,4"`.
+
+如果你足够仔细，你会发现，此操作等同于`ToNumber`抽象操作如何处理对象的（参见前面的章节“`ToNumber`”）。在当前`array`上执行`valueOf()`操作会失败，所以它就会转而去执行`toString()`获取一个字符串表示。于是，这两个数组就分别变成了`"1,2"`和`"3,4"`。现在，`+`将这两个字符串连接起来，产生你期望的结果：`"1,23,4"`。
 
 -----
 
-Let's set aside those messy details and go back to an earlier, simplified explanation: if either operand to `+` is a `string` (or becomes one with the above steps!), the operation will be `string` concatenation. Otherwise, it's always numeric addition.
+让我们抛开这些繁琐的细节，返回到一个较早的，简单的解释：如果`+`至少有一个操作数是字符串（或者通过上述步骤能够转成字符串），那就会进行字符串拼接，否则，它总是执行数字加法运算。
 
-**Note:** A commonly cited coercion gotcha is `[] + {}` vs. `{} + []`, as those two expressions result, respectively, in `"[object Object]"` and `0`. There's more to it, though, and we cover those details in "Blocks" in Chapter 5.
+**注意：**一个经常提到的关于coercion的坑是`[] + {}`与`{} + []`，这两个表达式的结果分别是`"[object Object]"`和`0`。还有更多类似的例子，我们在第五章“Blocks”会详细讲解。
 
-What's that mean for *implicit* coercion?
+那**implicit** coercion 是什么意思呢？
 
-You can coerce a `number` to a `string` simply by "adding" the `number` and the `""` empty `string`:
+通过简单的将数字和空字符串`""`相加，你可以把数字强制转成字符串：
 
 ```js
 var a = 42;
@@ -1023,17 +1031,17 @@ var b = a + "";
 b; // "42"
 ```
 
-**Tip:** Numeric addition with the `+` operator is commutative, which means `2 + 3` is the same as `3 + 2`. String concatenation with `+` is obviously not generally commutative, **but** with the specific case of `""`, it's effectively commutative, as `a + ""` and `"" + a` will produce the same result.
+**提示：**`+`操作符执行数字加法是可交换的，这意味着`2 + 3`和`3 + 2`是等价的。但是，字符串拼接显然不是一般的交换，**但是**，对于个别情况如`""`，它是可交换的，即`a + ""`和`"" + a`的结果是相同的。（译者注：这是a应该是为数字或字符串，如果a为上述的`{}`，这两个表达式产生的结果是不一样的）
 
-It's extremely common/idiomatic to (*implicitly*) coerce `number` to `string` with a `+ ""` operation. In fact, interestingly, even some of the most vocal critics of *implicit* coercion still use that approach in their own code, instead of one of its *explicit* alternatives.
+通过操作`+ ""`将数字（**隐式的**）强制转成字符串，这是非常常见和惯用的手法。事实上，有趣的是即使是对**implicit** coercion最强烈的批评者仍然在自己的代码中使用这种方式来替代显式转换。
 
-**I think this is a great example** of a useful form in *implicit* coercion, despite how frequently the mechanism gets criticized!
+**我觉得这是一个很好的例子**，表现了**implicit** coercion的有用的一面，尽管这个机制经常被批评！
 
-Comparing this *implicit* coercion of `a + ""` to our earlier example of `String(a)` *explicit* coercion, there's one additional quirk to be aware of. Because of how the `ToPrimitive` abstract operation works, `a + ""` invokes `valueOf()` on the `a` value, whose return value is then finally converted to a `string` via the internal `ToString` abstract operation. But `String(a)` just invokes `toString()` directly.
+将隐式转换`a + ""`与之前的显式转换的例子`String(a)`对比下，这里有个怪异的地方你需要注意下。这跟`ToPrimitive`抽象操作如何工作有关，`a + ""`在值`a`上调用`valueOf()`方法，它的返回值会通过内部的`ToString`抽象操作转成字符串。而`String(a)`则是直接调用`toString()`方法。
 
-Both approaches ultimately result in a `string`, but if you're using an `object` instead of a regular primitive `number` value, you may not necessarily get the *same* `string` value!
+这两种方法的最终结果都是字符串，但是，如果你使用对象来代码正常的原始数字值，你不一定得到**相同的**字符串值！
 
-Consider:
+考虑如下：
 
 ```js
 var a = {
@@ -1046,9 +1054,9 @@ a + "";			// "42"
 String( a );	// "4"
 ```
 
-Generally, this sort of gotcha won't bite you unless you're really trying to create confusing data structures and operations, but you should be careful if you're defining both your own `valueOf()` and `toString()` methods for some `object`, as how you coerce the value could affect the outcome.
+一般情况下，你不会被这种神坑给绊倒，除非你真的想创建混乱的数据结构和操作，如果你要为一些对象自定义你自己的`valueOf()`和`toString()`方法，你需要特别小心，因为你如何强制转换这些值，会影响最终的结果。
 
-What about the other direction? How can we *implicitly coerce* from `string` to `number`?
+那换个方向呢？我们如何隐式的将字符串强转成数字？
 
 ```js
 var a = "3.14";
@@ -1057,9 +1065,9 @@ var b = a - 0;
 b; // 3.14
 ```
 
-The `-` operator is defined only for numeric subtraction, so `a - 0` forces `a`'s value to be coerced to a `number`. While far less common, `a * 1` or `a / 1` would accomplish the same result, as those operators are also only defined for numeric operations.
+`-`操作符被定义为只能用于数字减法，所以`a - 0`会强制将`a`的值转成数字。虽然不太常见，但是`a * 1`或`a / 1`也可以得到相同的结果，因为这些操作符也被定义为只能用于数学运算。
 
-What about `object` values with the `-` operator? Similar story as for `+` above:
+`-`操作符作用于`object`值会怎样？和上述提到的`+`类似：
 
 ```js
 var a = [3];
@@ -1068,11 +1076,11 @@ var b = [1];
 a - b; // 2
 ```
 
-Both `array` values have to become `number`s, but they end up first being coerced to `strings` (using the expected `toString()` serialization), and then are coerced to `number`s, for the `-` subtraction to perform on.
+两个数组都必须转成数字，但是它们首先会被强制转成字符串（使用预期的`toString()`进行序列化），然后被强制转成数字，从而进行减法运算。
 
-So, is *implicit* coercion of `string` and `number` values the ugly evil you've always heard horror stories about? I don't personally think so.
+如你一直听说的有关**implicit** coercion 的恐怖故事，你仍然觉得`string`和`number`值之间的强制转换是丑陋邪恶的吗？我个人不这么认为。
 
-Compare `b = String(a)` (*explicit*) to `b = a + ""` (*implicit*). I think cases can be made for both approaches being useful in your code. Certainly `b = a + ""` is quite a bit more common in JS programs, proving its own utility regardless of *feelings* about the merits or hazards of *implicit* coercion in general.
+比较下`b = String(a)`（**显式的**）与`b = a + ""`（**隐式的**）。我认为，在你的代码中，这两种方法都可以正常的运行。很显然，在JS程序中，`b = a + ""`肯定是更常见，默默地证明自己的作用，不管别人以什么样的态度对待**implicit** coercion的优点或危害。
 
 ### Implicitly: Booleans --> Numbers
 
