@@ -1039,7 +1039,7 @@ b; // "42"
 
 将隐式转换`a + ""`与之前的显式转换的例子`String(a)`对比下，这里有个怪异的地方你需要注意下。这跟`ToPrimitive`抽象操作如何工作有关，`a + ""`在值`a`上调用`valueOf()`方法，它的返回值会通过内部的`ToString`抽象操作转成字符串。而`String(a)`则是直接调用`toString()`方法。
 
-这两种方法的最终结果都是字符串，但是，如果你使用对象来代码正常的原始数字值，你不一定得到**相同的**字符串值！
+这两种方法的最终结果都是字符串，但是，如果你使用对象来代替正常的原始数字值，你不一定得到**相同的**字符串值！
 
 考虑如下：
 
@@ -1084,9 +1084,9 @@ a - b; // 2
 
 ### Implicitly: Booleans --> Numbers
 
-I think a case where *implicit* coercion can really shine is in simplifying certain types of complicated `boolean` logic into simple numeric addition. Of course, this is not a general-purpose technique, but a specific solution for specific cases.
+我认为这里有个例子能够让**implicit** coercion 大放异彩，它能够将某些复杂的布尔逻辑转换成简单的数字加法来简化问题。当然，这不是一种通用的技术，而是特定的情况下特定的解决方案。
 
-Consider:
+考虑如下：
 
 ```js
 function onlyOne(a,b,c) {
@@ -1103,11 +1103,11 @@ onlyOne( b, a, b );	// true
 onlyOne( a, b, a );	// false
 ```
 
-This `onlyOne(..)` utility should only return `true` if exactly one of the arguments is `true` / truthy. It's using *implicit* coercion on the truthy checks and *explicit* coercion on the others, including the final return value.
+`onlyOne(..)`工具函数，在只有一个参数为`true`或truthy的情况下才返回`true`。它在truthy检测时用到了**implicit** coercion，其他地方用的是**explicit** coercion，包括最后的返回值。
 
-But what if we needed that utility to be able to handle four, five, or twenty flags in the same way? It's pretty difficult to imagine implementing code that would handle all those permutations of comparisons.
+但是，如果我们用这个工具以同样的方式来处理四个、五个或二十个标记？难以想象，你的代码会如何处理所有的排列。
 
-But here's where coercing the `boolean` values to `number`s (`0` or `1`, obviously) can greatly help:
+但是，在这里将`boolean`值转成`number`（很明显，结果只能是`0`或`1`）起到了极大地帮助：
 
 ```js
 function onlyOne() {
@@ -1132,11 +1132,11 @@ onlyOne( b, b );				// false
 onlyOne( b, a, b, b, b, a );	// false
 ```
 
-**Note:** Of course, instead of the `for` loop in `onlyOne(..)`, you could more tersely use the ES5 `reduce(..)` utility, but I didn't want to obscure the concepts.
+**注意：**当然，你可以使用ES5的`reduce(..)`工具函数来代替`onlyOne(..)`中的`for`循环，我只是不想在这掩盖概念。
 
-What we're doing here is relying on the `1` for `true`/truthy coercions, and numerically adding them all up. `sum += arguments[i]` uses *implicit* coercion to make that happen. If one and only one value in the `arguments` list is `true`, then the numeric sum will be `1`, otherwise the sum will not be `1` and thus the desired condition is not met.
+我们在这里所做的，依赖于强制转成后的`1`代表`true`或truthy的值，然后把它们当数字一样加起来。`sum += arguments[i]`使用**implicit** coercion来实现这一目标。如果`arguments`列表中有且只有一个值为`true`，这数字的总和将为`1`，否则，总和不为`1`代表条件没有得到满足。
 
-We could of course do this with *explicit* coercion instead:
+当然，我们也可以用**explicit** coercion的方式来实现：
 
 ```js
 function onlyOne() {
@@ -1148,15 +1148,15 @@ function onlyOne() {
 }
 ```
 
-We first use `!!arguments[i]` to force the coercion of the value to `true` or `false`. That's so you could pass non-`boolean` values in, like `onlyOne( "42", 0 )`, and it would still work as expected (otherwise you'd end up with `string` concatenation and the logic would be incorrect).
+我们首先使用`!!arguments[i]`将值强制转成`true`或`false`。这就是为什么你可以传递非布尔值进去，如`onlyOne( "42", 0 )`，它仍然会按预期执行（否则，你最终得到是字符串拼接的结果，这个逻辑是不正确的）。
 
-Once we're sure it's a `boolean`, we do another *explicit* coercion with `Number(..)` to make sure the value is `0` or `1`.
+一旦我们确定这是一个`boolean`值，我们就可以使用另外一个**explicit** coercion `Number(..)`，以确保最终的值只能是`0`或`1`。
 
-Is the *explicit* coercion form of this utility "better"? It does avoid the `NaN` trap as explained in the code comments. But, ultimately, it depends on your needs. I personally think the former version, relying on *implicit* coercion is more elegant (if you won't be passing `undefined` or `NaN`), and the *explicit* version is needlessly more verbose.
+**explicit** coercion 的这种形式是否更好？它确实避免了上面代码注释中解释的`NaN`陷阱。但是，最终取决于你的需求。我个人认为前一个版本更好，依靠**implicit** coercion更优雅（只要你不传递`undefined`或`NaN`），而**explicit**版本则显得更冗长。
 
-But as with almost everything we're discussing here, it's a judgment call.
+但是我们在这里讨论的几乎一切，都是主观判断。
 
-**Note:** Regardless of *implicit* or *explicit* approaches, you could easily make `onlyTwo(..)` or `onlyFive(..)` variations by simply changing the final comparison from `1`, to `2` or `5`, respectively. That's drastically easier than adding a bunch of `&&` and `||` expressions. So, generally, coercion is very helpful in this case.
+**注意：**无论是**implicit**或**explicit**的方法，你都可以容易的实现`onlyTwo(..)`或`onlyFive(..)`，通过简单地改变最后的比较值为`2`或`5`即可。这比使用一大堆`&&`和`||`表达式容易得多。因此，coercion在这种情况下还是非常有帮助的。
 
 ### Implicitly: * --> Boolean
 
