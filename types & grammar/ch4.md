@@ -1160,21 +1160,23 @@ function onlyOne() {
 
 ### Implicitly: * --> Boolean
 
-Now, let's turn our attention to *implicit* coercion to `boolean` values, as it's by far the most common and also by far the most potentially troublesome.
+现在，让我们把注意力放在**implicit** coercion中的布尔值上，因为它是迄今为止最常见的也是最潜在的麻烦。
 
 Remember, *implicit* coercion is what kicks in when you use a value in such a way that it forces the value to be converted. For numeric and `string` operations, it's fairly easy to see how the coercions can occur.
 
-But, what sort of expression operations require/force (*implicitly*) a `boolean` coercion?
+请记住，当你以某种方式使用一个值，在这种方式中这个值需要被强制转成其他类型的值，这个时候就会发生**implicit** coercion。相比于数字和字符串操作，你很容易看到这个强制转换是如何发生的。
 
-1. The test expression in an `if (..)` statement.
-2. The test expression (second clause) in a `for ( .. ; .. ; .. )` header.
-3. The test expression in `while (..)` and `do..while(..)` loops.
-4. The test expression (first clause) in `? :` ternary expressions.
-5. The left-hand operand (which serves as a test expression -- see below!) to the `||` ("logical or") and `&&` ("logical and") operators.
+但是，什么样的表达式操作要求（隐式地）将值强转成布尔？
 
-Any value used in these contexts that is not already a `boolean` will be *implicitly* coerced to a `boolean` using the rules of the `ToBoolean` abstract operation covered earlier in this chapter.
+1. `if (..)`语句中的测试表达式。
+2. `for ( .. ; .. ; .. )`循环中的测试表达式（第二个语句）。
+3. `while (..)`和`do..while(..)`循环中的测试表达式。
+4. `? :`三元表达式中的测试表达式（第一个语句）。
+5. `||`（逻辑或）和`&&`（逻辑与）操作符的左操作数（它作为一个测试表达式——见下文！）
 
-Let's look at some examples:
+在这些情况下使用的任何值，如果不是布尔值，将会被隐式地强转成布尔值，使用本章前面讲解的`ToBoolean`抽象操作规则。
+
+让我们来看一些例子：
 
 ```js
 var a = 42;
@@ -1198,7 +1200,7 @@ if ((a && d) || c) {
 }
 ```
 
-In all these contexts, the non-`boolean` values are *implicitly coerced* to their `boolean` equivalents to make the test decisions.
+所有这些情况下，非布尔值都被隐式强制转成与它们等价的布尔值进行条件判断。
 
 ### Operators `||` and `&&`
 
