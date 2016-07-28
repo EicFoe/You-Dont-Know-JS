@@ -15,7 +15,7 @@ Converting a value from one type to another is often called "type casting," when
 
 显式地将一个值从一种类型转换为另外一种类型，通常称为“type casting”。而“coercion”代表隐式的完成这一动作（根据值是如何使用的规则进行强制转换）。
 
-**注意：**它可能不是很明显，但JavaScript的coercions结果总是原始值之一，比如`string`、`number`或`boolean`。这里不存在coercions的结果是复合值，如`object`或`function`。第三章讲解的“装箱”，能够把原始值包装成它们对应的封装类，准确意义上讲它并不算coercion。
+**注意：** 它可能不是很明显，但JavaScript的coercions结果总是原始值之一，比如`string`、`number`或`boolean`。这里不存在coercions的结果是复合值，如`object`或`function`。第三章讲解的“装箱”，能够把原始值包装成它们对应的封装类，准确意义上讲它并不算coercion。
 
 另一种区分这两个概念的方式是：“type casting”（或“type conversion”）发生在静态类型语言的编译阶段，而“type coercion”发生在动态类型语言的运行阶段。
 
@@ -41,7 +41,7 @@ var c = String( a );	// explicit coercion
 
 两种方法都达到同样的效果：`42`转换成`"42"`。但是，**如何转换**，才是JavaScript coercion激烈辩论的核心。
 
-**注意：**从技术上讲，在这里有一些细致入微的行为差异超出了形式上的不同（beyond the stylistic difference）。我们会在这章的“Implicitly: Strings <--> Numbers”一节中详细讲解。
+**注意：** 从技术上讲，在这里有一些细致入微的行为差异超出了形式上的不同（beyond the stylistic difference）。我们会在这章的“Implicitly: Strings <--> Numbers”一节中详细讲解。
 
 The terms "explicit" and "implicit," or "obvious" and "hidden side effect," are *relative*.
 
@@ -75,11 +75,11 @@ var a = 1.07 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000;
 a.toString(); // "1.07e21"
 ```
 
-对于常规的对象，除非你指定你自己的，默认的`toString()`（位于`Object.prototype.toString()`）会返回**internal `[[Class]]`**（参见第三章），比如：`"[object Object]"`。
+对于常规的对象，除非你指定你自己的，默认的`toString()`（位于`Object.prototype.toString()`）会返回 **internal `[[Class]]`**（参见第三章），比如：`"[object Object]"`。
 
 但如之前展示的，如果一个对象有自己的`toString()`方法，并且你把该对象以字符串的方式来使用，它的`toString()`方法会被自动调用，并且将这个函数的字符串结果作为替代值。
 
-**注意：**将对象转换为字符串的方法，技术上来说，是通过抽象操作`ToPrimitive`来完成的（ES5规范，第9.1节），但这些细致入微的细节在本章的后面的`ToNumber`一节中会详细介绍，所以我们在这先跳过。
+**注意：** 将对象转换为字符串的方法，技术上来说，是通过抽象操作`ToPrimitive`来完成的（ES5规范，第9.1节），但这些细致入微的细节在本章的后面的`ToNumber`一节中会详细介绍，所以我们在这先跳过。
 
 数组覆盖了默认的`toString()`方法，它会将每个值都转为字符串，然后用`","`将它们连接起来：
 
@@ -196,7 +196,7 @@ An optional second argument can be passed to `JSON.stringify(..)` that is called
 
 如果**replacer**是一个数组，它应该是一个字符串数组，每个值都指定了一个对象的属性名称，代表该属性应该被加入到序列化中。如果一个属性不在这个列表中，它会被跳过。
 
-如果**replacer**是一个函数，它首先会被该对象本身调用一次，然后该对象的每个属性会调用一次，每次都会给这个函数传递两个值，**key**和**value**。想在序列化过程中跳过某个**key**，只需返回`undefined`。否则，返回提供的**value**。
+如果**replacer**是一个函数，它首先会被该对象本身调用一次，然后该对象的每个属性会调用一次，每次都会给这个函数传递两个值，**key** 和 **value**。想在序列化过程中跳过某个 **key**，只需返回`undefined`。否则，返回提供的 **value**。
 
 ```js
 var a = {
@@ -213,9 +213,9 @@ JSON.stringify( a, function(k,v){
 // "{"b":42,"d":[1,2,3]}"
 ```
 
-**注意：**在**replacer**为函数的例子中，参数`k`第一次调用的时候值是`undefined`（第一次是`a`对象本身被传递进去）。`if`语句**过滤掉**名称为`"c"`的属性。字符串化是递归进行的，所以数组`[1,2,3]`中的每个值（`1`、`2`和`3`）都被传递给**replacer**的参数`v`，对应的下标（`0`、`1`和`2`）作为参数`k`。
+**注意：** 在 **replacer** 为函数的例子中，参数`k`第一次调用的时候值是`undefined`（第一次是`a`对象本身被传递进去）。`if`语句 **过滤掉** 名称为`"c"`的属性。字符串化是递归进行的，所以数组`[1,2,3]`中的每个值（`1`、`2`和`3`）都被传递给 **replacer** 的参数`v`，对应的下标（`0`、`1`和`2`）作为参数`k`。
 
-第三个可选的参数也可以传递给`JSON.stringify(..)`，被称为**space**，被用作缩进，是为了使得输出更加漂亮和人性化。**space**可以是一个正整数，指定每层缩进应该缩进多少个空格。或者，**space**也可以是个字符串，其值的前十个字符被用于每个缩进层次。
+第三个可选的参数也可以传递给`JSON.stringify(..)`，被称为 **space** ，被用作缩进，是为了使得输出更加漂亮和人性化。**space** 可以是一个正整数，指定每层缩进应该缩进多少个空格。或者，**space** 也可以是个字符串，其值的前十个字符被用于每个缩进层次。
 
 ```js
 var a = {
@@ -250,7 +250,7 @@ JSON.stringify( a, null, "-----" );
 请记住，`JSON.stringify(..)`并不是coercion的一种形式。我们就讲解到这，然而，有两个原因把它的行为和`ToString`的coercion相关联：
 
 1. `string`、`number`、`boolean`和`null`值的JSON字符串化和通过`ToString`抽象操作规则强制转换为字符串值是基本一样的。
-2. 如果你传递一个对象给`JSON.stringify(..)`，并且该对象有一个`toJSON()`方法，`toJSON()`会在序列化之前自动调用，将该值（在某种程度上）“coerce”（翻译：强制转换）成一个**JSON安全**的值
+2. 如果你传递一个对象给`JSON.stringify(..)`，并且该对象有一个`toJSON()`方法，`toJSON()`会在序列化之前自动调用，将该值（在某种程度上）“coerce”（翻译：强制转换）成一个 **JSON安全** 的值
 
 ### `ToNumber`
 
@@ -262,7 +262,7 @@ JSON.stringify( a, null, "-----" );
 
 对大部分符合数字字面量规则/语法（参见第三章）的字符串值，都可以与`ToNumber`工作的很好。如果失败，其结果是`NaN`（而不是报数字字面量相关的语法错误）。一个不同的例子是，前缀是`0`的八进制数字在此操作中不会被当作八进制处理（而是当作正常的十进制），尽管这种格式在数字字面量中是合法的（参见第二章）。
 
-**注意：**数字字面量语法和字符串值经过`ToNumber`之后的结果，二者之间的差异是极其微妙的，因而不会在这里进一步讲解。有关更多信息，请参考ES5规范的第9.3.1节。
+**注意：** 数字字面量语法和字符串值经过`ToNumber`之后的结果，二者之间的差异是极其微妙的，因而不会在这里进一步讲解。有关更多信息，请参考ES5规范的第9.3.1节。
 
 对象和数组首先被转化为与它们等价的原始值，得到的结果值（如果还不是一个数字）会根据刚才提到的`ToNumber`规则强制转换为数字。
 
@@ -272,7 +272,7 @@ JSON.stringify( a, null, "-----" );
 
 在ES5中，你可以创建一个不可转换的对象——一个没有`valueOf()`和`toString()`方法的对象——并且它的原型为`null`，通常可以通过`Object.create(null)`来创建这么一个对象。参见本系列标题为**this和对象原型**以获取更多有关原型的信息。
 
-**注意：**我们会在本章后面详细讲解如何强制转为数字，下面这段代码只是认为函数`Number(..)`做了此项工作。
+**注意：** 我们会在本章后面详细讲解如何强制转为数字，下面这段代码只是认为函数`Number(..)`做了此项工作。
 
 考虑如下：
 
@@ -304,7 +304,7 @@ Number( [ "abc" ] );	// NaN
 
 ### `ToBoolean`
 
-接下来，让我们聊一聊在JS中`boolean`的行为。关于这个话题，会有**许多的混乱和误解**飘出来，所以请密切关注！
+接下来，让我们聊一聊在JS中`boolean`的行为。关于这个话题，会有 **许多的混乱和误解** 飘出来，所以请密切关注！
 
 首先，JS确实有关键字`true`和`false`，并且它们表现得完全如你所期望的`boolean`值。一个最普遍的误解是，`1`和`0`与`true`和`false`是等价的。虽然这在其他的语言中可能是对的，但在JS中，数字就是数字，布尔就是布尔。你可以强制`1`转换成`true`（反之亦然）或`0`转换成`false`（反之亦然）。但是，它们绝对不是一样的。
 
@@ -335,15 +335,15 @@ But that's not the end of the story. We need to discuss how values other than th
 
 By logical conclusion, if a value is *not* on that list, it must be on *another list*, which we call the "truthy" values list. But JS doesn't really define a "truthy" list per se. It gives some examples, such as saying explicitly that all objects are truthy, but mostly the spec just implies: **anything not explicitly on the falsy list is therefore truthy.**
 
-显而易见，如果一个值**不在**那个列表中，那它肯定在**另一个列表中**，我们称之为“truthy”值列表。但是JS并没有真正定义“truthy”列表。它提供了一些例子，例如明确规定所有的对象都是“truthy”，其实这个规范的意思就是：**所有不在falsy列表中的值都是truthy。**
+显而易见，如果一个值 **不在** 那个列表中，那它肯定在 **另一个列表中**，我们称之为“truthy”值列表。但是JS并没有真正定义“truthy”列表。它提供了一些例子，例如明确规定所有的对象都是“truthy”，其实这个规范的意思就是：**所有不在falsy列表中的值都是truthy。**
 
 #### Falsy Objects
 
-且慢，这节的标题似乎有点自相矛盾。我**刚刚说过**JS规范中要求所有的对象都是truthy，对不对？所以这不应该有“falsy object”。
+且慢，这节的标题似乎有点自相矛盾。我 **刚刚说过** JS规范中要求所有的对象都是truthy，对不对？所以这不应该有“falsy object”。
 
 那可能意味着什么？
 
-你也许会认为这意味着一个falsy value（如`""`、`0`或`false`）的对象包装类（参见第三章）。但是，不要落入**陷阱**。
+你也许会认为这意味着一个falsy value（如`""`、`0`或`false`）的对象包装类（参见第三章）。但是，不要落入 **陷阱**。
 
 **注意：** 你可能会得到一个微妙的规范玩笑。
 
@@ -365,9 +365,9 @@ d; // true
 
 所有三个都表现为`true`，所有`d`的结果只能为`true`。
 
-**提示：**请注意包裹`a && b && c`的那个`Boolean( .. )`表达式——你可能想知道为什么它在那里。我们会在本章后面讲解，所以你先记在脑子里。想要抢先看，试试不带上`Boolean( .. )`来调用`d = a && b && c`，看看`d`的结果是什么。
+**提示：** 请注意包裹`a && b && c`的那个`Boolean( .. )`表达式——你可能想知道为什么它在那里。我们会在本章后面讲解，所以你先记在脑子里。想要抢先看，试试不带上`Boolean( .. )`来调用`d = a && b && c`，看看`d`的结果是什么。
 
-所以，如果“falsy objects”**不是包裹假值的对象**，那它究竟是什么鬼？
+所以，如果“falsy objects” **不是包裹假值的对象**，那它究竟是什么鬼？
 
 最蛋疼的地方是，它们可以在你的JS程序中显式出来，但它们并不是真正的JavaScript的一部分。
 
@@ -375,7 +375,7 @@ d; // true
 
 There are certain cases where browsers have created their own sort of *exotic* values behavior, namely this idea of "falsy objects," on top of regular JS semantics.
 
-有些情况下，浏览器会创建自己的那种**异国情调**的值行为，把这个想法取名为“falsy objects”，在正规JS语义之上定义的。
+有些情况下，浏览器会创建自己的那种 **异国情调** 的值行为，把这个想法取名为“falsy objects”，在正规JS语义之上定义的。
 
 一个“falsy object”是一个值，它的外观和行为都表现得像一个正常的对象（或属性等），但是当你把它强制转换为`boolean`，它会被转成`false`。
 
@@ -383,9 +383,9 @@ There are certain cases where browsers have created their own sort of *exotic* v
 
 The most well-known case is `document.all`: an array-like (object) provided to your JS program *by the DOM* (not the JS engine itself), which exposes elements in your page to your JS program. It *used* to behave like a normal object--it would act truthy. But not anymore.
 
-最著名的例子是`document.all`：它是由**DOM提供**（不是JS引擎本身提供的）给你的JS程序的一个类数组对象，它把当前页面的元素暴露给你的JS程序。它**曾经**表现得像个正常的对象——它表现得truthy。但现在不是了。
+最著名的例子是`document.all`：它是由 **DOM提供**（不是JS引擎本身提供的）给你的JS程序的一个类数组对象，它把当前页面的元素暴露给你的JS程序。它 **曾经** 表现得像个正常的对象——它表现得truthy。但现在不是了。
 
-`document.all`本身从来就不是真正的**标准**，并且它早已经被弃用了。
+`document.all`本身从来就不是真正的 **标准**，并且它早已经被弃用了。
 
 “难道就不能把它移除掉吗？”对不起，这是个不错的尝试。我也希望他们能。但是这里有太多太多遗留的JS代码，都依赖于它才能运行。
 
@@ -437,9 +437,9 @@ var d = Boolean( a && b && c );
 d;
 ```
 
-是的，你猜对了，`d`在这是还是`true`。为什么？与上面的理由是一样的。尽管它们看起来像假值，但是`[]`、`{}`和`function(){}`**并不在**假值列表中，所以它们是truthy values。
+是的，你猜对了，`d`在这是还是`true`。为什么？与上面的理由是一样的。尽管它们看起来像假值，但是`[]`、`{}`和`function(){}` **并不在** 假值列表中，所以它们是truthy values。
 
-换句话说，truthy 列表是无限长。做出这样的名单是不可能的。你只能做出有限的falsy列表，请参阅**它**。
+换句话说，truthy 列表是无限长。做出这样的名单是不可能的。你只能做出有限的falsy列表，请参阅 **它**。
 
 请花五分钟将假值列表写在便签纸上，贴在你的电脑显示器上，或者，如果你愿意，就记住它。无论哪种方式，你会很容易能够建立一个虚拟的truthy列表，只要看它是不是在这个假值列表上。
 
@@ -453,15 +453,15 @@ truthy和falsy的重要性在于理解当一个值（显式或隐式）强制转
 
 这里的目标是确定我们的代码模式，我们可以说清楚并且很明显得看出我们正在将值从一种类型转成另一种类型，避免给未来的开发者留坑。我们写的代码越明确，就越可能后来的人就能够阅读我们的代码并且不费力气就能明白我们的意图。
 
-你很难找到关于**explicit** coercion 任何突出的分歧，因为它和静态类型语言的行为十分相似，而静态类型语言的行为是大家普遍接受的做法。因此，我们现在会想当然的同意**explicit** coercion 不是邪恶的或有争议性的这个观点。我们之后会重温一下：）
+你很难找到关于 **explicit** coercion 任何突出的分歧，因为它和静态类型语言的行为十分相似，而静态类型语言的行为是大家普遍接受的做法。因此，我们现在会想当然的同意 **explicit** coercion 不是邪恶的或有争议性的这个观点。我们之后会重温一下：）
 
 ### Explicitly: Strings <--> Numbers
 
 我们以最简单也最常用的coercion操作开始：字符串和数字之间的强制转换。
 
-为了在字符串和数字之前强制转换，我们使用内置的`String(..)`和`Number(..)`函数（就是我们在第三章中提到过的“native constructors”），但**非常重要的是**，我们不会在它们前面使用`new`关键字。因此，我们并不是在创建包装对象（object wrappers）。
+为了在字符串和数字之前强制转换，我们使用内置的`String(..)`和`Number(..)`函数（就是我们在第三章中提到过的“native constructors”），但 **非常重要的是**，我们不会在它们前面使用`new`关键字。因此，我们并不是在创建包装对象（object wrappers）。
 
-相反，我们实际上是在两个类型之间进行**显式强制转换**：
+相反，我们实际上是在两个类型之间进行 **显式强制转换**：
 
 ```js
 var a = 42;
@@ -476,13 +476,13 @@ d; // 3.14
 
 `String(..)`将其他任何值强制转换成原始的字符串值，使用的是我们之前讨论过的`ToString`规则。`Number(..)`将其他任何值强制转换成原始的数字值，使用的是我们之前讨论过的`ToNumber`规则。
 
-我把它称为**explicit** coercion，因为在一般情况下，对大多数开发者来说，这些操作的最终结果很明显，就是我们所使用的函数的类型转换结果。
+我把它称为 **explicit** coercion，因为在一般情况下，对大多数开发者来说，这些操作的最终结果很明显，就是我们所使用的函数的类型转换结果。
 
 事实上，这种用法看起来很像它是在其他一些静态类型语言中所做的。
 
 例如，在C/C++中，你可以使用`(int)x`或`int(x)`，这二者都会将`x`中的值转换成整数。这两种形式都是有效的，但很多人喜欢后者，因为它看起来很像一个函数调用。在JavaScript中，当你使用`Number(x)`，它看起来非常相似。在JS中，它是不是一个函数调用，其实并不重要。
 
-除了`String(..)`和`Number(..)`，还有其他的方式可以**明确地**在`string`和`number`之间进行转换。
+除了`String(..)`和`Number(..)`，还有其他的方式可以 **明确地** 在`string`和`number`之间进行转换。
 
 ```js
 var a = 42;
@@ -497,11 +497,11 @@ d; // 3.14
 
 调用`a.toString()`表面上是明确的（很明显，“toString”的意思就是“to a string”），但是这里面有一些隐藏的隐式操作。**原始值**，如`42`，并不能调用`toString()`方法。因此，JS会对`42`自动“装箱”（参见第三章），转换成一个封装对象，这样这个封装对象就能调用`toString()`方法了。换句换说，你可以称之为“explicitly implicit”（显式的隐式）。
 
-`+c`在这里显示了`+`操作符的**一元操作符**形式（操作符只有一个操作数）。这不是执行数学加法（或字符串拼接——见下文），一元的`+`显式的将操作数（`c`）强制转换成`number`值。
+`+c`在这里显示了`+`操作符的 **一元操作符** 形式（操作符只有一个操作数）。这不是执行数学加法（或字符串拼接——见下文），一元的`+`显式的将操作数（`c`）强制转换成`number`值。
 
-`+c`是**explicit** coercion吗？取决于你的经验和观点。如果你知道（当然，你现在肯定知道了）一元的`+`是用来显式强制转成`number`，那么这是很明确和明显的。然而，如果你从来没有见过它，那它看起来就非常混乱，隐式的，带有隐藏的副作用，等等。
+`+c`是 **explicit** coercion吗？取决于你的经验和观点。如果你知道（当然，你现在肯定知道了）一元的`+`是用来显式强制转成`number`，那么这是很明确和明显的。然而，如果你从来没有见过它，那它看起来就非常混乱，隐式的，带有隐藏的副作用，等等。
 
-**注意：**在JS开源社区，普遍接受的观点是，一元`+`是一种可接受的**explicit** coercion的形式。
+**注意：** 在JS开源社区，普遍接受的观点是，一元`+`是一种可接受的 **explicit** coercion的形式。
 
 即使你真的喜欢`+c`的形式，但在有些地方，它看起来非常的混乱。考虑如下：
 
@@ -522,9 +522,9 @@ d; // 8.14
 
 你应该认真考虑避免使用一元`+`（或`-`）进行强制转换，当它紧靠着其他操作符的时候。尽管上述的作品能够工作，但它被普遍认为是一个坏主意。尽管`d = +c`（或`d =+ c`）很容易被混淆为`d += c`，但二者是完全不同的！
 
-**注意：**另一个极为困惑的地方是，一元`+`和递增操作符`++`与递减操作符`--`相邻使用。例如：`a +++b`、`a + ++b`和`a + + +b`。参见第五章的“Expression Side-Effects”详细了解`++`。
+**注意：** 另一个极为困惑的地方是，一元`+`和递增操作符`++`与递减操作符`--`相邻使用。例如：`a +++b`、`a + ++b`和`a + + +b`。参见第五章的“Expression Side-Effects”详细了解`++`。
 
-请记住，我们正在尝试变得明确，**减少**混乱，而不是使情况变得更糟糕！
+请记住，我们正在尝试变得明确，**减少** 混乱，而不是使情况变得更糟糕！
 
 #### `Date` To `number`
 
@@ -542,7 +542,7 @@ var d = new Date( "Mon, 18 Aug 2014 08:53:06 CDT" );
 var timestamp = +new Date();
 ```
 
-**注意：**一些开发者都知道在JavaScript中有个特殊的语法“技巧”，就是在构造函数调用（用`new`调用一个函数）中，如果没有参数需要传递，那`()`就是**可选**的。所以，你可能会看到`var timestamp = +new Date;`这种形式的调用。然而，并非所有的开发者都认为省略`()`提高了代码的可读性，因为它是一种不常见的语法异常，它只能用于`new fn()`这种调用形式，而不能用于`fn()`常规的调用形式。
+**注意：** 一些开发者都知道在JavaScript中有个特殊的语法“技巧”，就是在构造函数调用（用`new`调用一个函数）中，如果没有参数需要传递，那`()`就是 **可选** 的。所以，你可能会看到`var timestamp = +new Date;`这种形式的调用。然而，并非所有的开发者都认为省略`()`提高了代码的可读性，因为它是一种不常见的语法异常，它只能用于`new fn()`这种调用形式，而不能用于`fn()`常规的调用形式。
 
 coercion 并不是获取`Date`对象的时间戳的唯一途径。一个noncoercion（非coercion）的方式是更可取的，因为它更明确表现我们的意图：
 
@@ -552,7 +552,7 @@ var timestamp = new Date().getTime();
 // var timestamp = (new Date).getTime();
 ```
 
-但是，一个**更好的**非强制选项是使用ES5添加的`Date.now()`静态函数：
+但是，一个 **更好的** 非强制选项是使用ES5添加的`Date.now()`静态函数：
 
 ```js
 var timestamp = Date.now();
@@ -568,7 +568,7 @@ if (!Date.now) {
 }
 ```
 
-我建议你跳过有关日期强制转换的形式。使用`Date.now()`获取**当前**的时间戳，使用`new Date( .. ).getTime()`获取你指定的**非当前**日期/时间的时间戳。
+我建议你跳过有关日期强制转换的形式。使用`Date.now()`获取 **当前** 的时间戳，使用`new Date( .. ).getTime()`获取你指定的 **非当前** 日期/时间的时间戳。
 
 #### The Curious Case of the `~`
 
@@ -591,11 +591,11 @@ if (!Date.now) {
 
 这些特殊数字不是32位表示的（因为它们来自64位 IEEE 754标准——见第二章），因此`ToInt32`只是指定`0`作为这些数字的返回值。
 
-`0 | __`这种强制转换的`ToInt32`操作，是**显式的**，还是**隐式的**，这一点值得商榷。从规范的角度看，这毫无疑问是**显式的**，但是如果你不了解这个级别的位运算，那它看起来是更加的**隐式**，更加的神奇。尽管如此，为保持与本章其他的断言一致，我们把它称为**显式的**。
+`0 | __`这种强制转换的`ToInt32`操作，是 **显式的**，还是 **隐式的**，这一点值得商榷。从规范的角度看，这毫无疑问是 **显式的**，但是如果你不了解这个级别的位运算，那它看起来是更加的 **隐式**，更加的神奇。尽管如此，为保持与本章其他的断言一致，我们把它称为 **显式的**。
 
 让我们把注意力转回到`~`。`~`运算符首先“强制转换”成32位`number`值，然后执行按位非（翻转每个位的奇偶）。
 
-**注意：**这跟`!`的操作很相似，`!`不仅将值强制转成`boolean`，还会翻转它的奇偶位（见后面的讨论，“unary `!`”）。
+**注意：** 这跟`!`的操作很相似，`!`不仅将值强制转成`boolean`，还会翻转它的奇偶位（见后面的讨论，“unary `!`”）。
 
 但是，我们为什么要关心位的翻转？这是一些非常专业化，细致入微的东西。对JS开发者来说，需要推理各个位是非常罕见的。
 
@@ -643,7 +643,7 @@ if (a.indexOf( "ol" ) == -1) {	// true
 
 And now, finally, we see why `~` could help us! Using `~` with `indexOf()` "coerces" (actually just transforms) the value **to be appropriately `boolean`-coercible**:
 
-而现在，我们终于明白为什么`~`可以帮助我们！使用`~`和`indexOf()`把值“强制转换”（其实只是变换）成**合适的`boolean`**：
+而现在，我们终于明白为什么`~`可以帮助我们！使用`~`和`indexOf()`把值“强制转换”（其实只是变换）成 **合适的`boolean`** ：
 
 ```js
 var a = "Hello World";
@@ -662,11 +662,11 @@ if (!~a.indexOf( "ol" )) {	// true
 }
 ```
 
-`~`将`indexOf(..)`的返回值进行转换：对于“失败”的`-1`我们得到了falsy值`0`，而其他的值都是truthy。
+运算符`~`将`indexOf(..)`的返回值进行转换：对于“失败”的 `-1`我们得到了falsy值`0`，而其他的值都是truthy。
 
-**注意：**伪算法`-(x+1)`只是意味着`~-1`的结果是`-0`，但实际上它会得到`0`是因为底层的操作实际上是位运算，而不是数学运算。
+**注意：** 伪算法`-(x+1)`只是意味着`~-1`的结果是`-0`，但实际上它会得到`0`是因为底层的操作实际上是位运算，而不是数学运算。
 
-从技术上讲，`if (~a.indexOf(..))`仍然是依靠**implicit** coercion，将`0`转成`false`，或将非零转成`true`。但总体而言，对我来说`~`更像是一个**explicit** coercion机制，只要你知道这种语法形式是要做什么。
+从技术上讲，`if (~a.indexOf(..))`仍然是依靠 **implicit** coercion，将`0`转成`false`，或将非零转成`true`。但总体而言，对我来说`~`更像是一个 **explicit** coercion机制，只要你知道这种语法形式是要做什么。
 
 相比之前的`>= 0` / `== -1`的杂乱，我觉得现在的代码更整洁。
 
@@ -674,9 +674,9 @@ if (!~a.indexOf( "ol" )) {	// true
 
 在代码中你会遇到`~`还可能出现在一个地方：有些开发者会使用双波浪线`~~`截断数字的小数部分（即“强制”将一个数字转成“整数”）。很多人认为它和调用`Math.floor(..)`的结果是一样的（这是错误的想法）。
 
-`~~`的工作原理是：首先右边的`~`应用`ToInt32` “coercion”，并执行按位翻转，然后左边的`~`做第二次按位翻转，翻转所有位回到原来的状态。最终的结果是`ToInt32` “coercion”（又名截断）。
+双波浪`~~`的工作原理是：首先右边的`~`应用`ToInt32` “coercion”，并执行按位翻转，然后左边的`~`做第二次按位翻转，翻转所有位回到原来的状态。最终的结果是`ToInt32` “coercion”（又名截断）。
 
-**注意：**`~~`的按位双翻转和双重否定`!!`的行为十分相似，我们会在之后的章节“Explicitly: * --> Boolean”详细解释。
+**注意：** `~~`的按位双翻转和双重否定`!!`的行为十分相似，我们会在之后的章节“Explicitly: * --> Boolean”详细解释。
 
 然而，你需要特别小心`~~`。第一，它只在32位值上能够可靠地工作。但更重要的是，它在负数上的作用结果和`Math.floor(..)`是不一样的！
 
@@ -685,9 +685,9 @@ Math.floor( -49.6 );	// -50
 ~~-49.6;				// -49
 ```
 
-撇开它与`Math.floor(..)`的差异不谈，`~~x`能够截断数字成32位整数。但是`x | 0`也能做到，而且似乎花费**较少的努力**。
+撇开它与`Math.floor(..)`的差异不谈，`~~x`能够截断数字成32位整数。但是`x | 0`也能做到，而且似乎花费 **较少的努力**。
 
-那你为什么会选择`~~x`而不是`x | 0`呢？因为**运算符优先级**（见第五章）：
+那你为什么会选择`~~x`而不是`x | 0`呢？因为 **运算符优先级**（见第五章）：
 
 ```js
 ~~1E20 / 10;		// 166199296
@@ -717,15 +717,15 @@ Number( b );	// NaN
 parseInt( b );	// 42
 ```
 
-从字符串中解析出数字，能够容忍非数字字符的存在——它只是从左到右开始解析，遇到非数字字符就停止解析——而coercion**无法容忍**非数字，所以会失败，产生结果值`NaN`。
+从字符串中解析出数字，能够容忍非数字字符的存在——它只是从左到右开始解析，遇到非数字字符就停止解析——而coercion **无法容忍** 非数字，所以会失败，产生结果值`NaN`。
 
 解析不应该被看作是coercion的替代品。这两个任务，尽管很相似，但有不同的用途。当你不知道或不关心可能出现在右边的非数字字符，你就可以从一个`string`中解析出`number`。强制`string`转成`number`是在可接受的值只有数字的情况下使用，像`"42px"`这种字符串应该直接拒绝转成`number`。
 
-**提示：**`parseInt(..)`有一个双胞胎，`parseFloat(..)`，它能从一个字符串中解析出浮点数。
+**提示：** `parseInt(..)`有一个双胞胎，`parseFloat(..)`，它能从一个字符串中解析出浮点数。
 
 不要忘了`parseInt(..)`只对`string`值进行操作。传递一个`number`值给`parseInt(..)`是完全没有意义的。同理，传递其他类型的值，如`true`、`function(){..}`或`[1,2,3]`，也是没意义的。
 
-如果你传递一个非字符串，这个值首先会被自动强制转成字符串（参见前面的“`ToString`”），这显然是一个隐藏的**implicit** coercion。让你的程序依赖这样一个行为，这是一个非常糟糕的主意，所以千万不要传递非字符串值给`parseInt(..)`。
+如果你传递一个非字符串，这个值首先会被自动强制转成字符串（参见前面的“`ToString`”），这显然是一个隐藏的 **implicit** coercion。让你的程序依赖这样一个行为，这是一个非常糟糕的主意，所以千万不要传递非字符串值给`parseInt(..)`。
 
 ES5之前，`parseInt(..)`存在一个神坑，它是很多JS程序bug的根源。如果你没有传递第二个参数来指定数字的基数（即指定数字是多少进制），用于解析数字字符串内容，`parseInt(..)`会检测开始的字符进行推测。
 
@@ -777,7 +777,7 @@ parseInt( new String( "42") );
 
 这个也会失败吗？它是一个非字符串值。你希望这个`String`包装对象可以拆箱为`"42"`，然后很自然地，`42`就可以从字符串`"42"`中解析出来，对吗？
 
-我认为这种半**explicit**，半**implicit** coercion可以出现，往往是一个非常有用的事情。例如：
+我认为这种半 **explicit**，半 **implicit** coercion可以出现，往往是一个非常有用的事情。例如：
 
 ```js
 var a = {
@@ -792,13 +792,13 @@ parseInt( a ); // 42
 
 所以，如果你传递`Infinity`（`1 / 0`的结果很明显是它），把它强制转成什么字符串最有意义？浮现在你脑海中的只有两种合理的选择：`"Infinity"`和`"∞"`。JS选择了`"Infinity"`。它这么做我很高兴。
 
-我认为，在JS中**所有的值**都具有某种默认的字符串表示，这是件好事。这样它们就不再是神秘的黑盒子，（黑盒子）让我们不能调试和推理。
+我认为，在JS中 **所有的值** 都具有某种默认的字符串表示，这是件好事。这样它们就不再是神秘的黑盒子，（黑盒子）让我们不能调试和推理。
 
 现在，讨论下什么是19进制？显然，这完全是虚假和做作。哪个JS程序会使用19进制。这是荒谬的。但同样，让我们先沉浸在荒谬中。在19进制中，有效的数字字符是`0` - `9`和`a` - `i`（不区分大小写）。
 
 所以，回到我们的例子`parseInt( 1/0, 19 )`。它本质上是`parseInt( "Infinity", 19 )`。它是如何解析的呢？第一个字符是`"I"`，在愚蠢的19进制中，它代表（十进制数字）`18`。第二个字符是`"n"`，它不是有效的19进制字符，因此，解析礼貌地停止了，就像它在`"42px"`中遇到`"p"`一样。
 
-结果是？`18`。正如我们所猜想的那样。涉及到的这种行为，引导我们到这里，而不是抛出错误或返回`Infinity`本身，对JS来说是**非常重要的**，而且不应该如此轻易地丢弃它。
+结果是？`18`。正如我们所猜想的那样。涉及到的这种行为，引导我们到这里，而不是抛出错误或返回`Infinity`本身，对JS来说是 **非常重要的**，而且不应该如此轻易地丢弃它。
 
 这里还有一些关于`parseInt(..)`的行为可能令人吃惊但非常明智的例子，包括但不限于如下：
 
@@ -842,7 +842,7 @@ Boolean( g ); // false
 
 虽然`Boolean(..)`显然是 explicit，但是它并不常见或惯用。
 
-就像一元`+`运算符强制将一个值转成`number`（见上文），一元`!`否定运算符显式地将值强制转成`boolean`。**问题**是它同时也把值从truthy转成falsy，反之亦然。因此，最常见的方法是，JS开发者使用双重否定运算符`!!`显式将值强制转成`boolean`，因为第二个`!`会将奇偶位翻转回原来的样子！
+就像一元`+`运算符强制将一个值转成`number`（见上文），一元`!`否定运算符显式地将值强制转成`boolean`。**问题** 是它同时也把值从truthy转成falsy，反之亦然。因此，最常见的方法是，JS开发者使用双重否定运算符`!!`显式将值强制转成`boolean`，因为第二个`!`会将奇偶位翻转回原来的样子！
 
 ```js
 var a = "0";
@@ -902,37 +902,37 @@ var b = a ? true : false;
 
 三元运算符`? :`会测试`a`的真假，并且根据测试的结果来决定分配`true`或`false`给`b`。
 
-表面上看，这个惯用语法好像是**显式的**`ToBoolean`类型强制转换的一种形式，因为很明显，这个操作的结果只能是`true`或`false`。
+表面上看，这个惯用语法好像是 **显式的** `ToBoolean`类型强制转换的一种形式，因为很明显，这个操作的结果只能是`true`或`false`。
 
-然而，这里有个隐藏的**implicit** coercion，就是表达式`a`首先必须强制转成`boolean`才能进行真假测试。我把这种语法称为“explicitly implicit”。此外，我建议你在JavaScript中**应该完全避免这种语法**。它没有提供真正的好处，更糟糕的是，伪装成某些它不是的东西。
+然而，这里有个隐藏的 **implicit** coercion，就是表达式`a`首先必须强制转成`boolean`才能进行真假测试。我把这种语法称为“explicitly implicit”。此外，我建议你在JavaScript中 **应该完全避免这种语法**。它没有提供真正的好处，更糟糕的是，伪装成某些它不是的东西。
 
-`Boolean(a)`和`!!a`比**explicit** coercion的众多选项要好得多。
+`Boolean(a)`和`!!a`比 **explicit** coercion的众多选项要好得多。
 
 ## Implicit Coercion
 
 *Implicit* coercion refers to type conversions that are hidden, with non-obvious side-effects that implicitly occur from other actions. In other words, *implicit coercions* are any type conversions that aren't obvious (to you).
 
-**Implicit** coercion 是指在一些其他操作中隐式的发生类型转换，且没有明显的副作用。换句话说，**implicit coercions**是指对你来说不明显的任何类型转换。
+**Implicit** coercion 是指在一些其他操作中隐式的发生类型转换，且没有明显的副作用。换句话说，**implicit coercions** 是指对你来说不明显的任何类型转换。
 
 **explicit** coercion 的目标是很明显的（使代码明确，更容易理解），而**implicit** coercion的目标则明显相反：使代码更难理解。
 
-从表面上看，我认为这就是大部分针对 coercion 忿怒的来源。大多数对于“JavaScript coercion”的抱怨主要是针对**implicit** coercion。
+从表面上看，我认为这就是大部分针对 coercion 忿怒的来源。大多数对于“JavaScript coercion”的抱怨主要是针对 **implicit** coercion。
 
-**注意：**Douglas Crockford，**“JavaScript: The Good Parts”**（《JavaScript精粹》）的作者，在很多的会议和著作中都宣称应该尽量避免JavaScript coercion。但他的意思似乎是**implicit** coercion是不好的（他自己是这么认为的）。然而，如果你看过他的代码，你会发现很多coercion的例子，**implicit**和**explicit**都有！事实上，他的忧虑似乎主要针对`==`操作，但是正如你在本章中所看到的，这只是coercion机制的一部分。
+**注意：** Douglas Crockford，**“JavaScript: The Good Parts”**（《JavaScript精粹》）的作者，在很多的会议和著作中都宣称应该尽量避免JavaScript coercion。但他的意思似乎是 **implicit** coercion是不好的（他自己是这么认为的）。然而，如果你看过他的代码，你会发现很多coercion的例子，**implicit** 和 **explicit** 都有！事实上，他的忧虑似乎主要针对`==`操作，但是正如你在本章中所看到的，这只是coercion机制的一部分。
 
-所以，**implicit coercion**是邪恶的吗？危险吗？它是JavaScript的设计缺陷？我们应该不惜一切代码避免它吗？
+所以，**implicit coercion** 是邪恶的吗？危险吗？它是JavaScript的设计缺陷？我们应该不惜一切代码避免它吗？
 
 我敢打赌，你们中的大多数读者都倾向于热烈欢呼，“是的！”
 
-**别这么着急下结论。**且听我慢慢道来。
+**别这么着急下结论。** 且听我慢慢道来。
 
 Let's take a different perspective on what *implicit* coercion is, and can be, than just that it's "the opposite of the good explicit kind of coercion." That's far too narrow and misses an important nuance.
 
-让我们换个角度来看**implicit** coercion是什么，而不是仅仅认为它是“好的explicit coercion的对立面。”这过于狭隘，而且会错过一个重要的细微之处。
+让我们换个角度来看 **implicit** coercion是什么，而不是仅仅认为它是“好的explicit coercion的对立面。”这过于狭隘，而且会错过一个重要的细微之处。
 
 Let's define the goal of *implicit* coercion as: to reduce verbosity, boilerplate, and/or unnecessary implementation detail that clutters up our code with noise that distracts from the more important intent.
 
-我们定义**implicit** coercion的目标是：减少冗余，样板代码和不必要的实现细节，这些噪声代码会让我们从更重要的意图那分心。
+我们定义 **implicit** coercion的目标是：减少冗余，样板代码和不必要的实现细节，这些噪声代码会让我们从更重要的意图那分心。
 
 ### Simplifying Implicitly
 
@@ -944,7 +944,7 @@ SomeType x = SomeType( AnotherType( y ) )
 
 在这里例子中，我有个任意类型的值存储在`y`中，我想把它转成`SomeType`类型。问题是，这种语言不能从任意类型直接转成`SomeType`类型。它需要一个中间步骤，先将`y`的值转成`AnotherType`，然后再将`AnotherType`转成`SomeType`。
 
-现在，如果有门语言（你也可以创建这样的语言）能够让你这么**做**：
+现在，如果有门语言（你也可以创建这样的语言）能够让你这么 **做**：
 
 ```js
 SomeType x = SomeType( y )
@@ -956,23 +956,23 @@ Wouldn't you generally agree that we simplified the type conversion here to redu
 
 Some would argue, at least in some circumstances, yes. But I think an equal argument can be made of many other circumstances that here, the simplification **actually aids in the readability of the code** by abstracting or hiding away such details, either in the language itself or in our own abstractions.
 
-有人会说，至少在某些情况下，是这样的。但我认为在其他情况下有相同的争论，我们可以通过抽象或隐藏这样的细节来**提高代码的可读性**，无论是在语言本身还是我们自己的抽象中。
+有人会说，至少在某些情况下，是这样的。但我认为在其他情况下有相同的争论，我们可以通过抽象或隐藏这样的细节来 **提高代码的可读性**，无论是在语言本身还是我们自己的抽象中。
 
 毫无疑问，在幕后的某个地方，中间转换步骤仍然在进行之中。但是，如果这个细节在这里隐藏了，我们可以正当把`y`转成类型`SomeType`作为一个通用的操作，隐藏这些繁琐的细节。
 
-虽然不是一个完美的比喻，我在本章剩余部分会一直辩论，JS的**implicit** coercion为你的代码提供了类似的援助。
+虽然不是一个完美的比喻，我在本章剩余部分会一直辩论，JS的 **implicit** coercion为你的代码提供了类似的援助。
 
-但是，**非常重要的是**，这不是一个绝对的说法。在**implicit** coercion周围肯定潜伏着很多的“弊端”，它们会损害你的代码胜于提高代码的可读性。显然，我们必须学会如何避免这样的构造，这样我们就不会用各种bugs来毒害我们的代码。
+但是，**非常重要的是**，这不是一个绝对的说法。在 **implicit** coercion周围肯定潜伏着很多的“弊端”，它们会损害你的代码胜于提高代码的可读性。显然，我们必须学会如何避免这样的构造，这样我们就不会用各种bugs来毒害我们的代码。
 
-许多开发者认为，如果某个机制可以做一些有用的事情**A**，但也可以滥用或误用，做一些可怕的事情**Z**，那么为了保持安全，我们就应该彻底抛弃这一机制。
+许多开发者认为，如果某个机制可以做一些有用的事情 **A**，但也可以滥用或误用，做一些可怕的事情 **Z**，那么为了保持安全，我们就应该彻底抛弃这一机制。
 
-我鼓励你不要满足于这一点。不要“把婴儿和洗澡水一起倒掉。”不要因为你见过**implicit** coercion “不好的部分”就认为它所有的都是不好的。我认为它也有“好的部分”，并且，我想帮助和激励更多的你们去找到并拥抱它们！
+我鼓励你不要满足于这一点。不要“把婴儿和洗澡水一起倒掉。”不要因为你见过 **implicit** coercion “不好的部分”就认为它所有的都是不好的。我认为它也有“好的部分”，并且，我想帮助和激励更多的你们去找到并拥抱它们！
 
 ### Implicitly: Strings <--> Numbers
 
 Earlier in this chapter, we explored *explicitly* coercing between `string` and `number` values. Now, let's explore the same task but with *implicit* coercion approaches. But before we do, we have to examine some nuances of operations that will *implicitly* force coercion.
 
-在本章前面，我们探索了在字符串和数字之间的显式转换。现在，让我们用**implicit** coercion的方法来探索同样的事情。但在此之前，我们需要检查一些运算符的细微差别，它们会进行隐式的强制转换。
+在本章前面，我们探索了在字符串和数字之间的显式转换。现在，让我们用 **implicit** coercion的方法来探索同样的事情。但在此之前，我们需要检查一些运算符的细微差别，它们会进行隐式的强制转换。
 
 `+`操作符被重载同时用于数字加法和字符串拼接。那JS如何知道你想要使用哪种类型的操作？考虑如下：
 
@@ -1002,7 +1002,7 @@ a + b; // "1,23,4"
 
 两个操作数都不是字符串，但是很明显它们都被强制转成字符串，然后执行字符串拼接操作。那么，这到底是怎么回事？
 
-（**警告：**接下来会从规范角度来深入探讨这个细节问题，如果你被吓到了，请跳过下面两段）
+（**警告：** 接下来会从规范角度来深入探讨这个细节问题，如果你被吓到了，请跳过下面两段）
 
 -----
 
@@ -1018,9 +1018,9 @@ If you're paying close attention, you'll notice that this operation is now ident
 
 让我们抛开这些繁琐的细节，返回到一个较早的，简单的解释：如果`+`至少有一个操作数是字符串（或者通过上述步骤能够转成字符串），那就会进行字符串拼接，否则，它总是执行数字加法运算。
 
-**注意：**一个经常提到的关于coercion的坑是`[] + {}`与`{} + []`，这两个表达式的结果分别是`"[object Object]"`和`0`。还有更多类似的例子，我们在第五章“Blocks”会详细讲解。
+**注意：** 一个经常提到的关于coercion的坑是`[] + {}`与`{} + []`，这两个表达式的结果分别是`"[object Object]"`和`0`。还有更多类似的例子，我们在第五章“Blocks”会详细讲解。
 
-那**implicit** coercion 是什么意思呢？
+那 **implicit** coercion 是什么意思呢？
 
 通过简单的将数字和空字符串`""`相加，你可以把数字强制转成字符串：
 
@@ -1031,15 +1031,15 @@ var b = a + "";
 b; // "42"
 ```
 
-**提示：**`+`操作符执行数字加法是可交换的，这意味着`2 + 3`和`3 + 2`是等价的。但是，字符串拼接显然不是一般的交换，**但是**，对于个别情况如`""`，它是可交换的，即`a + ""`和`"" + a`的结果是相同的。（译者注：这是a应该是为数字或字符串，如果a为上述的`{}`，这两个表达式产生的结果是不一样的）
+**提示：** `+`操作符执行数字加法是可交换的，这意味着`2 + 3`和`3 + 2`是等价的。但是，字符串拼接显然不是一般的交换，**但是**，对于个别情况如`""`，它是可交换的，即`a + ""`和`"" + a`的结果是相同的。（译者注：这是a应该是为数字或字符串，如果a为上述的`{}`，这两个表达式产生的结果是不一样的）
 
-通过操作`+ ""`将数字（**隐式的**）强制转成字符串，这是非常常见和惯用的手法。事实上，有趣的是即使是对**implicit** coercion最强烈的批评者仍然在自己的代码中使用这种方式来替代显式转换。
+通过操作`+ ""`将数字（**隐式的**）强制转成字符串，这是非常常见和惯用的手法。事实上，有趣的是即使是对 **implicit** coercion最强烈的批评者仍然在自己的代码中使用这种方式来替代显式转换。
 
-**我觉得这是一个很好的例子**，表现了**implicit** coercion的有用的一面，尽管这个机制经常被批评！
+**我觉得这是一个很好的例子**，表现了 **implicit** coercion的有用的一面，尽管这个机制经常被批评！
 
 将隐式转换`a + ""`与之前的显式转换的例子`String(a)`对比下，这里有个怪异的地方你需要注意下。这跟`ToPrimitive`抽象操作如何工作有关，`a + ""`在值`a`上调用`valueOf()`方法，它的返回值会通过内部的`ToString`抽象操作转成字符串。而`String(a)`则是直接调用`toString()`方法。
 
-这两种方法的最终结果都是字符串，但是，如果你使用对象来代替正常的原始数字值，你不一定得到**相同的**字符串值！
+这两种方法的最终结果都是字符串，但是，如果你使用对象来代替正常的原始数字值，你不一定得到 **相同的** 字符串值！
 
 考虑如下：
 
@@ -1078,13 +1078,13 @@ a - b; // 2
 
 两个数组都必须转成数字，但是它们首先会被强制转成字符串（使用预期的`toString()`进行序列化），然后被强制转成数字，从而进行减法运算。
 
-如你一直听说的有关**implicit** coercion 的恐怖故事，你仍然觉得`string`和`number`值之间的强制转换是丑陋邪恶的吗？我个人不这么认为。
+如你一直听说的有关 **implicit** coercion 的恐怖故事，你仍然觉得`string`和`number`值之间的强制转换是丑陋邪恶的吗？我个人不这么认为。
 
-比较下`b = String(a)`（**显式的**）与`b = a + ""`（**隐式的**）。我认为，在你的代码中，这两种方法都可以正常的运行。很显然，在JS程序中，`b = a + ""`肯定是更常见，默默地证明自己的作用，不管别人以什么样的态度对待**implicit** coercion的优点或危害。
+比较下`b = String(a)`（**显式的**）与`b = a + ""`（**隐式的**）。我认为，在你的代码中，这两种方法都可以正常的运行。很显然，在JS程序中，`b = a + ""`肯定是更常见，默默地证明自己的作用，不管别人以什么样的态度对待 **implicit** coercion的优点或危害。
 
 ### Implicitly: Booleans --> Numbers
 
-我认为这里有个例子能够让**implicit** coercion 大放异彩，它能够将某些复杂的布尔逻辑转换成简单的数字加法来简化问题。当然，这不是一种通用的技术，而是特定的情况下特定的解决方案。
+我认为这里有个例子能够让 **implicit** coercion 大放异彩，它能够将某些复杂的布尔逻辑转换成简单的数字加法来简化问题。当然，这不是一种通用的技术，而是特定的情况下特定的解决方案。
 
 考虑如下：
 
@@ -1103,7 +1103,7 @@ onlyOne( b, a, b );	// true
 onlyOne( a, b, a );	// false
 ```
 
-`onlyOne(..)`工具函数，在只有一个参数为`true`或truthy的情况下才返回`true`。它在truthy检测时用到了**implicit** coercion，其他地方用的是**explicit** coercion，包括最后的返回值。
+`onlyOne(..)`工具函数，在只有一个参数为`true`或truthy的情况下才返回`true`。它在truthy检测时用到了 **implicit** coercion，其他地方用的是 **explicit** coercion，包括最后的返回值。
 
 但是，如果我们用这个工具以同样的方式来处理四个、五个或二十个标记？难以想象，你的代码会如何处理所有的排列。
 
@@ -1132,11 +1132,11 @@ onlyOne( b, b );				// false
 onlyOne( b, a, b, b, b, a );	// false
 ```
 
-**注意：**当然，你可以使用ES5的`reduce(..)`工具函数来代替`onlyOne(..)`中的`for`循环，我只是不想在这掩盖概念。
+**注意：** 当然，你可以使用ES5的`reduce(..)`工具函数来代替`onlyOne(..)`中的`for`循环，我只是不想在这掩盖概念。
 
-我们在这里所做的，依赖于强制转成后的`1`代表`true`或truthy的值，然后把它们当数字一样加起来。`sum += arguments[i]`使用**implicit** coercion来实现这一目标。如果`arguments`列表中有且只有一个值为`true`，这数字的总和将为`1`，否则，总和不为`1`代表条件没有得到满足。
+我们在这里所做的，依赖于强制转成后的`1`代表`true`或truthy的值，然后把它们当数字一样加起来。`sum += arguments[i]`使用 **implicit** coercion来实现这一目标。如果`arguments`列表中有且只有一个值为`true`，这数字的总和将为`1`，否则，总和不为`1`代表条件没有得到满足。
 
-当然，我们也可以用**explicit** coercion的方式来实现：
+当然，我们也可以用 **explicit** coercion的方式来实现：
 
 ```js
 function onlyOne() {
@@ -1150,21 +1150,21 @@ function onlyOne() {
 
 我们首先使用`!!arguments[i]`将值强制转成`true`或`false`。这就是为什么你可以传递非布尔值进去，如`onlyOne( "42", 0 )`，它仍然会按预期执行（否则，你最终得到是字符串拼接的结果，这个逻辑是不正确的）。
 
-一旦我们确定这是一个`boolean`值，我们就可以使用另外一个**explicit** coercion `Number(..)`，以确保最终的值只能是`0`或`1`。
+一旦我们确定这是一个`boolean`值，我们就可以使用另外一个 **explicit** coercion `Number(..)`，以确保最终的值只能是`0`或`1`。
 
-**explicit** coercion 的这种形式是否更好？它确实避免了上面代码注释中解释的`NaN`陷阱。但是，最终取决于你的需求。我个人认为前一个版本更好，依靠**implicit** coercion更优雅（只要你不传递`undefined`或`NaN`），而**explicit**版本则显得更冗长。
+**explicit** coercion 的这种形式是否更好？它确实避免了上面代码注释中解释的`NaN`陷阱。但是，最终取决于你的需求。我个人认为前一个版本更好，依靠 **implicit** coercion更优雅（只要你不传递`undefined`或`NaN`），而 **explicit** 版本则显得更冗长。
 
 但是我们在这里讨论的几乎一切，都是主观判断。
 
-**注意：**无论是**implicit**或**explicit**的方法，你都可以容易的实现`onlyTwo(..)`或`onlyFive(..)`，通过简单地改变最后的比较值为`2`或`5`即可。这比使用一大堆`&&`和`||`表达式容易得多。因此，coercion在这种情况下还是非常有帮助的。
+**注意：** 无论是 **implicit** 或 **explicit** 的方法，你都可以容易的实现`onlyTwo(..)`或`onlyFive(..)`，通过简单地改变最后的比较值为`2`或`5`即可。这比使用一大堆`&&`和`||`表达式容易得多。因此，coercion在这种情况下还是非常有帮助的。
 
 ### Implicitly: * --> Boolean
 
-现在，让我们把注意力放在**implicit** coercion中的布尔值上，因为它是迄今为止最常见的也是最潜在的麻烦。
+现在，让我们把注意力放在 **implicit** coercion中的布尔值上，因为它是迄今为止最常见的也是最潜在的麻烦。
 
 Remember, *implicit* coercion is what kicks in when you use a value in such a way that it forces the value to be converted. For numeric and `string` operations, it's fairly easy to see how the coercions can occur.
 
-请记住，当你以某种方式使用一个值，在这种方式中这个值需要被强制转成其他类型的值，这个时候就会发生**implicit** coercion。相比于数字和字符串操作，你很容易看到这个强制转换是如何发生的。
+请记住，当你以某种方式使用一个值，在这种方式中这个值需要被强制转成其他类型的值，这个时候就会发生 **implicit** coercion。相比于数字和字符串操作，你很容易看到这个强制转换是如何发生的。
 
 但是，什么样的表达式操作要求（隐式地）将值强转成布尔？
 
@@ -1204,21 +1204,21 @@ if ((a && d) || c) {
 
 ### Operators `||` and `&&`
 
-It's quite likely that you have seen the `||` ("logical or") and `&&` ("logical and") operators in most or all other languages you've used. So it'd be natural to assume that they work basically the same in JavaScript as in other similar languages.
+我相信你在你使用的所有其他语言中都见过`||`（逻辑或）和`&&`（逻辑与）运算符。所以，你会很自然的就假设它们在JavaScript中的工作机制和其他语言基本一样。
 
-There's some very little known, but very important, nuance here.
+这里有一些细微差别，很少人知道，但是却非常重要。
 
-In fact, I would argue these operators shouldn't even be called "logical ___ operators", as that name is incomplete in describing what they do. If I were to give them a more accurate (if more clumsy) name, I'd call them "selector operators," or more completely, "operand selector operators."
+事实上，我认为这些运算符不应该叫做“逻辑运算符”，因为这个名字跟它们所做的事情完全不相符。如果要我给它们一个更准确的名字，我会叫它们“选择运算符”，更完整点，叫“操作数选择运算符。”
 
-Why? Because they don't actually result in a *logic* value (aka `boolean`) in JavaScript, as they do in some other languages.
+为什么？因为不像在其他语言中会产生一个逻辑值（即`boolean`），在JavaScript中，它们的结果实际上并不是布尔值。
 
-So what *do* they result in? They result in the value of one (and only one) of their two operands. In other words, **they select one of the two operand's values**.
+那它们产生的结果是什么？它们产生的结果是两个操作数中的一个（并且只有一个）的值。换句话说，**它们选择两个操作数中的一个的值**。
 
-Quoting the ES5 spec from section 11.11:
+在ES5规范的第11.11节：
 
-> The value produced by a && or || operator is not necessarily of type Boolean. The value produced will always be the value of one of the two operand expressions.
+> &&或||运算符产生的结果并不一定是布尔类型。所产生的值始终是在两个操作数表达式中的一个的值。
 
-Let's illustrate:
+让我们举例说明：
 
 ```js
 var a = 42;
@@ -1232,19 +1232,19 @@ c || b;		// "abc"
 c && b;		// null
 ```
 
-**Wait, what!?** Think about that. In languages like C and PHP, those expressions result in `true` or `false`, but in JS (and Python and Ruby, for that matter!), the result comes from the values themselves.
+**等下，这是什么情况！？** 试想一下，在像C和PHP这样的语言中，这些表达式的结果是`true`或`false`，但在JS（对于这种情况，还包括Python和Ruby）中，结果来自值本身。
 
-Both `||` and `&&` operators perform a `boolean` test on the **first operand** (`a` or `c`). If the operand is not already `boolean` (as it's not, here), a normal `ToBoolean` coercion occurs, so that the test can be performed.
+`||`和`&&`运算符会在 **第一个操作数**（`a`或`c`）上进行`boolean`测试。如果这个操作数不是`boolean`（在这里显然不是），会在这里进行一个正常的`ToBoolean`强制转换，从而可以进行测试。
 
-For the `||` operator, if the test is `true`, the `||` expression results in the value of the *first operand* (`a` or `c`). If the test is `false`, the `||` expression results in the value of the *second operand* (`b`).
+对于`||`运算符，如果测试结果为`true`，`||`表达式的结果是 **第一个操作数**（`a`或`c`）的值。如果测试结果为`false`，`||`表达式的结果是 **第二个操作数**（`b`）的值。
 
-Inversely, for the `&&` operator, if the test is `true`, the `&&` expression results in the value of the *second operand* (`b`). If the test is `false`, the `&&` expression results in the value of the *first operand* (`a` or `c`).
+相反地是，对于`&&`运算符，如果测试结果为`true`，`&&`表达式的结果是 **第二个操作数**（`b`）的值。如果测试结果是`false`，`&&`表达式的结果是 **第一个操作数**（`a` or `c`）的值
 
-The result of a `||` or `&&` expression is always the underlying value of one of the operands, **not** the (possibly coerced) result of the test. In `c && b`, `c` is `null`, and thus falsy. But the `&&` expression itself results in `null` (the value in `c`), not in the coerced `false` used in the test.
+`||`或`&&`表达式的结果始终是其中一个操作数的值，**而不是** 测试的结果（可能需要强制转换）。在`c && b`中，`c`是`null`，因此是falsy。但是`&&`表达式本身的结果是`null`（变量`c`的值），而不是在测试中使用的强制转换后的`false`。
 
-Do you see how these operators act as "operand selectors", now?
+现在，你看到这些运算符是如何充当“操作数选择器”了吗？
 
-Another way of thinking about these operators:
+换种方式来思考这些运算符：
 
 ```js
 a || b;
@@ -1256,9 +1256,9 @@ a && b;
 a ? b : a;
 ```
 
-**Note:** I call `a || b` "roughly equivalent" to `a ? a : b` because the outcome is identical, but there's a nuanced difference. In `a ? a : b`, if `a` was a more complex expression (like for instance one that might have side effects like calling a `function`, etc.), then the `a` expression would possibly be evaluated twice (if the first evaluation was truthy). By contrast, for `a || b`, the `a` expression is evaluated only once, and that value is used both for the coercive test as well as the result value (if appropriate). The same nuance applies to the `a && b` and `a ? b : a` expressions.
+**注意：** 我说`a || b`“大致相当于”`a ? a : b`是因为最终结果是相同的，但有一个微妙的差异。在`a ? a : b`中，如果`a`是一个十分复杂的表达式（例如可能产生副作用，如函数调用等），（如果第一次计算的结果是truthy）则`a`表达式可能会被计算两次。与此相反，对`a || b`来说，`a`表达式只会计算一次，并且计算结果同时用于布尔测试和（如果测试通过）返回值。同样的细微差别适用于`a && b`和`a ? b : a`。
 
-An extremely common and helpful usage of this behavior, which there's a good chance you may have used before and not fully understood, is:
+这种行为有一个非常普遍和有益的用法，你可能之前已经使用过但没有完全理解，这里有一个很好的机会让你理解它：
 
 ```js
 function foo(a,b) {
@@ -1272,23 +1272,23 @@ foo();					// "hello world"
 foo( "yeah", "yeah!" );	// "yeah yeah!"
 ```
 
-The `a = a || "hello"` idiom (sometimes said to be JavaScript's version of the C# "null coalescing operator") acts to test `a` and if it has no value (or only an undesired falsy value), provides a backup default value (`"hello"`).
+`a = a || "hello"`这个惯用语法（有时别人会称之为JavaScript版本的C#“null coalescing operator”）会先测试`a`，如果它没有值（或者是一个falsy值），就提供一个备用的默认值（`"hello"`）。
 
-**Be careful**, though!
+但是，**请注意**：
 
 ```js
 foo( "That's it!", "" ); // "That's it! world" <-- Oops!
 ```
 
-See the problem? `""` as the second argument is a falsy value (see `ToBoolean` earlier in this chapter), so the `b = b || "world"` test fails, and the `"world"` default value is substituted, even though the intent probably was to have the explicitly passed `""` be the value assigned to `b`.
+看出问题了吗？第二个参数`""`是一个falsy值（请参阅本章前面的`ToBoolean`），所以`b = b || "world"`会测试失败，因此它会被默认值`"world"`替代，尽管你可能只是想把`""`显式地赋值给`b`。
 
-This `||` idiom is extremely common, and quite helpful, but you have to use it only in cases where *all falsy values* should be skipped. Otherwise, you'll need to be more explicit in your test, and probably use a `? :` ternary instead.
+`||`的惯用语法非常普遍，而且相当有帮助，但是，你应该只在 **所有假值** 都应该跳过的情况下使用它。否则，你需要更加明确地进行你的测试，可能需要使用三元运算符`? :`作为替代。
 
-This *default value assignment* idiom is so common (and useful!) that even those who publicly and vehemently decry JavaScript coercion often use it in their own code!
+**默认值赋值** 惯用语法是如此的常见（和有用！），以至于那些公开强烈谴责JavaScript coercion的人，也在自己的代码中经常使用它！
 
-What about `&&`?
+那关于`&&`呢？
 
-There's another idiom that is quite a bit less commonly authored manually, but which is used by JS minifiers frequently. The `&&` operator "selects" the second operand if and only if the first operand tests as truthy, and this usage is sometimes called the "guard operator" (also see "Short Circuited" in Chapter 5) -- the first expression test "guards" the second expression:
+还有一个惯用语法，很少见它被手工创建，但在JS minifiers中经常被使用。`&&`运算符，仅在第一个操作数测试为truthy的时候，才会选择第二个操作数，这种用法有时被成为“守护运算符（guard operator）”（参见第五章“Short Circuited”）——第一个表达式测试“守卫”第二个表达式：
 
 ```js
 function foo() {
@@ -1300,19 +1300,21 @@ var a = 42;
 a && foo(); // 42
 ```
 
-`foo()` gets called only because `a` tests as truthy. If that test failed, this `a && foo()` expression statement would just silently stop -- this is known as "short circuiting" -- and never call `foo()`.
+`foo()`被调用是因为`a`测试为truthy。如果测试失败，`a && foo()`表达式语句会默默的停止——这被称为“短路”——并且永远不会调用`foo()`。
 
-Again, it's not nearly as common for people to author such things. Usually, they'd do `if (a) { foo(); }` instead. But JS minifiers choose `a && foo()` because it's much shorter. So, now, if you ever have to decipher such code, you'll know what it's doing and why.
+再次说明，手动创建这样的表达式很少见。通常会使用`if (a) { foo(); }`来代替。但是JS minifiers会选择`a && foo()`，因为它短得多。所以，现在，如果你曾经有破译过这样的代码，你就会知道它在做什么以及为什么这么做。
 
 OK, so `||` and `&&` have some neat tricks up their sleeve, as long as you're willing to allow the *implicit* coercion into the mix.
 
-**Note:** Both the `a = b || "something"` and `a && b()` idioms rely on short circuiting behavior, which we cover in more detail in Chapter 5.
+好了，只要你愿意让**implicit** coercion加入进来，`||`和`&&`就会产生一些锦囊妙计。
 
-The fact that these operators don't actually result in `true` and `false` is possibly messing with your head a little bit by now. You're probably wondering how all your `if` statements and `for` loops have been working, if they've included compound logical expressions like `a && (b || c)`.
+**注意：** 无论是`a = b || "something"`还是`a && b()`，这两个惯用语法都依靠短路行为，我们会在第五章做更详细的介绍。
 
-Don't worry! The sky is not falling. Your code is (probably) just fine. It's just that you probably never realized before that there was an *implicit* coercion to `boolean` going on **after** the compound expression was evaluated.
+这些操作符的结果实际上并不是`true`和`false`，这个事实现在可能会让你头脑感到混乱。你可能想知道，你所有的`if`语句和`for`循环，如果它们包含复杂的逻辑表达式如`a && (b || c)`，是如何工作的。
 
-Consider:
+别担心！天没塌下来。你的代码（可能）工作的很好。只是你可能没有注意到，在组合表达式求值之后，还会进行一个 **implicit** coercion，将值强制转成`boolean`用于条件测试。
+
+考虑如下：
 
 ```js
 var a = 42;
@@ -1324,11 +1326,11 @@ if (a && (b || c)) {
 }
 ```
 
-This code still works the way you always thought it did, except for one subtle extra detail. The `a && (b || c)` expression *actually* results in `"foo"`, not `true`. So, the `if` statement *then* forces the `"foo"` value to coerce to a `boolean`, which of course will be `true`.
+这段代码仍然有效，如你所想象的那样，除了一个你可能不知道的微妙细节。`a && (b || c)`表达式的结果 **实际上** 是`"foo"`，而不是`true`。因为`if`语句最后会强制将`"foo"`值转成`boolean`，显然，结果是`true`。
 
-See? No reason to panic. Your code is probably still safe. But now you know more about how it does what it does.
+看到了吗？没有理由恐慌。你的代码可能仍然是安全的。但现在，你知道更多关于它是如何工作的。
 
-And now you also realize that such code is using *implicit* coercion. If you're in the "avoid (implicit) coercion camp" still, you're going to need to go back and make all of those tests *explicit*:
+现在你也知道，这样的代码是用 **implicit** coercion。如果你仍然在“避免 implicit coercion阵营”，你需要返回去把所有的测试变得 **explicit**：
 
 ```js
 if (!!a && (!!b || !!c)) {
@@ -1336,7 +1338,7 @@ if (!!a && (!!b || !!c)) {
 }
 ```
 
-Good luck with that! ... Sorry, just teasing.
+希望这能给你带来好运！......不好意思，只是开个玩笑。
 
 ### Symbol Coercion
 
