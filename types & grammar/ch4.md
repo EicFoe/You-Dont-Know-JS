@@ -1344,9 +1344,11 @@ if (!!a && (!!b || !!c)) {
 
 Up to this point, there's been almost no observable outcome difference between *explicit* and *implicit* coercion -- only the readability of code has been at stake.
 
-But ES6 Symbols introduce a gotcha into the coercion system that we need to discuss briefly. For reasons that go well beyond the scope of what we'll discuss in this book, *explicit* coercion of a `symbol` to a `string` is allowed, but *implicit* coercion of the same is disallowed and throws an error.
+到目前为止，**explicit** 和 **implicit** coercion 之间几乎没有什么可观的差别——仅仅是代码的可读性差别。
 
-Consider:
+但在ES6中引入的Symbols，为coercion系统引入了新的疑难杂症，我们需要简单的讨论下。考虑到我们该内容远远超出了我们将在本书的讨论范围，你需要记住，**显式地** 将`symbol`转成`string`是允许的，但 **隐式地** 转换是禁止的，并且会抛出一个错误。
+
+考虑如下：
 
 ```js
 var s1 = Symbol( "cool" );
@@ -1356,11 +1358,11 @@ var s2 = Symbol( "not cool" );
 s2 + "";						// TypeError
 ```
 
-`symbol` values cannot coerce to `number` at all (throws an error either way), but strangely they can both *explicitly* and *implicitly* coerce to `boolean` (always `true`).
+`symbol`值完全不能强制转成`number`（会抛出一个异常），但是很奇怪，它们可以被 **显式地** 或 **隐式地** 强转成`boolean`（总是`true`）。
 
-Consistency is always easier to learn, and exceptions are never fun to deal with, but we just need to be careful around the new ES6 `symbol` values and how we coerce them.
+一致性总是很容易学习的，对付异常总是无趣的，但是我们还是得对ES6新增的`symbol`格外小心，以及如何强制转换它们。
 
-The good news: it's probably going to be exceedingly rare for you to need to coerce a `symbol` value. The way they're typically used (see Chapter 3) will probably not call for coercion on a normal basis.
+好消息是：你需要强制转换一个`symbol`值的情况是极其罕见的。它们的典型用法（见第三章）可能不会要求coercion。
 
 ## Loose Equals vs. Strict Equals
 
