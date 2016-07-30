@@ -1346,7 +1346,7 @@ Up to this point, there's been almost no observable outcome difference between *
 
 到目前为止，**explicit** 和 **implicit** coercion 之间几乎没有什么可观的差别——仅仅是代码的可读性差别。
 
-但在ES6中引入的Symbols，为coercion系统引入了新的疑难杂症，我们需要简单的讨论下。考虑到我们该内容远远超出了我们将在本书的讨论范围，你需要记住，**显式地** 将`symbol`转成`string`是允许的，但 **隐式地** 转换是禁止的，并且会抛出一个错误。
+但在ES6中引入的Symbols，为coercion系统引入了新的疑难杂症，我们需要简单的讨论下。考虑到该内容远远超出了我们将在本书的讨论范围，你需要记住，**显式地** 将`symbol`转成`string`是允许的，但 **隐式地** 转换是禁止的，并且会抛出一个错误。
 
 考虑如下：
 
@@ -1364,13 +1364,13 @@ s2 + "";						// TypeError
 
 好消息是：你需要强制转换一个`symbol`值的情况是极其罕见的。它们的典型用法（见第三章）可能不会要求coercion。
 
-## Loose Equals vs. Strict Equals
+## Loose Equals vs. Strict Equals（非严格相等与严格相等）
 
-Loose equals is the `==` operator, and strict equals is the `===` operator. Both operators are used for comparing two values for "equality," but the "loose" vs. "strict" indicates a **very important** difference in behavior between the two, specifically in how they decide "equality."
+非严格相等是指`==`操作符，而严格相等是指`===`操作符。这两个操作符都被用于比较两个值是否相等，但是“非严格”与“严格”暗示了两者行为的一个 **非常重要** 不同，特别是在它们如何决定“相等”上。
 
-A very common misconception about these two operators is: "`==` checks values for equality and `===` checks both values and types for equality." While that sounds nice and reasonable, it's inaccurate. Countless well-respected JavaScript books and blogs have said exactly that, but unfortunately they're all *wrong*.
+关于这两个操作符一个非常常见的误解是：`==`检测两个值是否相等，而`===`检测两个值和类型是否相等。尽管这听起来很不错，也很合理，但这是不准确的。无数备受推崇的JavaScript书籍和博客纷纷表示正是这样，但不幸的是，它们都 **错了**。
 
-The correct description is: "`==` allows coercion in the equality comparison and `===` disallows coercion."
+正确的描述是：`==`在相等比较中允许coercion，而`===`禁止coercion。
 
 ### Equality Performance
 
