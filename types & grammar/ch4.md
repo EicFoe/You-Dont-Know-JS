@@ -1374,19 +1374,19 @@ s2 + "";						// TypeError
 
 ### Equality Performance
 
-Stop and think about the difference between the first (inaccurate) explanation and this second (accurate) one.
+停下来想想第一个（不准确）解释和第二个（准确）之间的差异。
 
-In the first explanation, it seems obvious that `===` is *doing more work* than `==`, because it has to *also* check the type. In the second explanation, `==` is the one *doing more work* because it has to follow through the steps of coercion if the types are different.
+在第一个解释中，似乎`===`比`==` **做了更多的工作**，因为它同时 **还要** 检查类型。在第二个解释中，`==`似乎 **做了更多的工作**，因为如果内心不同，它需要经过coercion的一系列步骤。
 
-Don't fall into the trap, as many have, of thinking this has anything to do with performance, though, as if `==` is going to be slower than `===` in any relevant way. While it's measurable that coercion does take *a little bit* of processing time, it's mere microseconds (yes, that's millionths of a second!).
+不要跟需要其他人一样落入陷阱，想象着这跟性能有什么关系，尽管在任何情况下`==`都比`===`会慢点。尽管可以测量到coercion确实会花费 **一点点** 的处理时间，但这是纯微妙（对的，是百万分之一秒！）级的时间。
 
-If you're comparing two values of the same types, `==` and `===` use the identical algorithm, and so other than minor differences in engine implementation, they should do the same work.
+如果你比价两个相同类型的值，`==` 和 `===` 使用了相同的算法，所以，除了引擎实现上微小差别，它们应该做同样的工作。
 
-If you're comparing two values of different types, the performance isn't the important factor. What you should be asking yourself is: when comparing these two values, do I want coercion or not?
+如果你比较两个不同类型的值，性能并不是重要的因素。你真正应该问自己的是：当比较这两个值的时候，我是否真的想要coercion？
 
-If you want coercion, use `==` loose equality, but if you don't want coercion, use `===` strict equality.
+如果你想要coercion，使用非严格相等`==`，但是如果你不想要coercion，请使用严格相等`===`。
 
-**Note:** The implication here then is that both `==` and `===` check the types of their operands. The difference is in how they respond if the types don't match.
+**注意：** 此处的含义是，`==` 和 `===` 都会检查它们操作数的内心。所不同的是它们在类型不匹配的情况下的响应方式。
 
 ### Abstract Equality
 
