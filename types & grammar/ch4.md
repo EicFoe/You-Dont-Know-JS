@@ -1390,24 +1390,26 @@ s2 + "";						// TypeError
 
 ### Abstract Equality
 
-The `==` operator's behavior is defined as "The Abstract Equality Comparison Algorithm" in section 11.9.3 of the ES5 spec. What's listed there is a comprehensive but simple algorithm that explicitly states every possible combination of types, and how the coercions (if necessary) should happen for each combination.
+在ES5规范第11.9.3节“The Abstract Equality Comparison Algorithm”中定义了`==`操作符的行为。在这里列出了一个全面但简单的算法，明确规定了每种可能的组合类型，以及在每个组合中如何发生强制转换（如果需要的话）。
 
 **Warning:** When (*implicit*) coercion is maligned as being too complicated and too flawed to be a *useful good part*, it is these rules of "abstract equality" that are being condemned. Generally, they are said to be too complex and too unintuitive for developers to practically learn and use, and that they are prone more to causing bugs in JS programs than to enabling greater code readability. I believe this is a flawed premise -- that you readers are competent developers who write (and read and understand!) algorithms (aka code) all day long. So, what follows is a plain exposition of the "abstract equality" in simple terms. But I implore you to also read the ES5 spec section 11.9.3. I think you'll be surprised at just how reasonable it is.
 
-Basically, the first clause (11.9.3.1) says, if the two values being compared are of the same type, they are simply and naturally compared via Identity as you'd expect. For example, `42` is only equal to `42`, and `"abc"` is only equal to `"abc"`.
+**警告：** 当（**implicit**）coercion 被诽谤，因为太复杂以及缺陷太多而不能成为 **有用的部分** ，实际上是在谴责“abstract equality”的这些规则。一般情况下，它们被认为过于复杂而难以让开发者直观的学习和使用，而且相比实现更高的代码可读性，它更容易在JS程序中造成bug。我相信这是一个有缺陷的前提——你们这些读者都是能够一整天写代码的有能力的开发者。接下来的是关于“abstract equality”的深入浅出的纯阐述。我恳请你同时也参考下ES5规范的第11.9.3的内容，我想你肯定会惊叹于它是多么的合理。
 
-Some minor exceptions to normal expectation to be aware of:
+第11.9.3.1节第一条指明，如果比较的两个值是同一类型，它们只是进行自然的值比较（正如你所期望的）。例如，`42`只与`42`相等，以及`"abc"`只与`"abc"`相等。
 
-* `NaN` is never equal to itself (see Chapter 2)
-* `+0` and `-0` are equal to each other (see Chapter 2)
+在正常范围内，这里有一些小的例外你需要注意：
 
-The final provision in clause 11.9.3.1 is for `==` loose equality comparison with `object`s (including `function`s and `array`s). Two such values are only *equal* if they are both references to *the exact same value*. No coercion occurs here.
+* `NaN` 永远不会等于本身（参见第二章）
+* `+0` 和 `-0` 彼此相等（参见第二章）
 
-**Note:** The `===` strict equality comparison is defined identically to 11.9.3.1, including the provision about two `object` values. It's a very little known fact that **`==` and `===` behave identically** in the case where two `object`s are being compared!
+第11.9.3.1节最后一条规定是关于对象（包括函数和数组）的非严格相等。这样的两个值仅在指向 **同一个值** 的时候才 **相等**。这里不会发生任何coercion。
 
-The rest of the algorithm in 11.9.3 specifies that if you use `==` loose equality to compare two values of different types, one or both of the values will need to be *implicitly* coerced. This coercion happens so that both values eventually end up as the same type, which can then directly be compared for equality using simple value Identity.
+**注意：** 严格相等`===`同样也在11.9.3.1节中定义了，包括两个对象值的规定。这里有个鲜为人知的事实，在比较两个对象的时候，**`==` 和 `===` 的表现是一致的。**
 
-**Note:** The `!=` loose not-equality operation is defined exactly as you'd expect, in that it's literally the `==` operation comparison performed in its entirety, then the negation of the result. The same goes for the `!==` strict not-equality operation.
+在11.9.3节剩余的算法指定了，如果你使用非严格相等`==`比较两个不同类型的值，一个或两个值需要被 **隐式** 强制转换。正是发生了这种强制转换，两个值最终会变成同一类型，然后就可以直接使用简单的值相等比较规则了。
+
+**注意：** 非严格不等`!=`操作符的功能如你说期望的那样，与`==`操作符结果的恰好相反。这同样适用于严格不等`!==`运算符。
 
 #### Comparing: `string`s to `number`s
 
