@@ -1413,7 +1413,7 @@ s2 + "";						// TypeError
 
 #### Comparing: `string`s to `number`s
 
-To illustrate `==` coercion, let's first build off the `string` and `number` examples earlier in this chapter:
+为了说明 `==` coercion，让我们先来看看本章前面有关 `string` 和 `number` 的例子：
 
 ```js
 var a = 42;
@@ -1423,22 +1423,22 @@ a === b;	// false
 a == b;		// true
 ```
 
-As we'd expect, `a === b` fails, because no coercion is allowed, and indeed the `42` and `"42"` values are different.
+正如我们所期望的，`a === b` 会失败，因为不允许 coercion，并且`42` 和 `"42"` 的值确实不同。
 
-However, the second comparison `a == b` uses loose equality, which means that if the types happen to be different, the comparison algorithm will perform *implicit* coercion on one or both values.
+然而，第二个比较 `a == b` 使用了非严格相等，这意味着如果比较的两个值的类型不同，比较算法会在一个或两个值上进行 **implicit** coercion。
 
-But exactly what kind of coercion happens here? Does the `a` value of `42` become a `string`, or does the `b` value of `"42"` become a `number`?
+但这里究竟发生了什么样子的强制转换？是`a`的值`42`变成了字符串，还是`b`的值`"42"`变成了数字？
 
-In the ES5 spec, clauses 11.9.3.4-5 say:
+在ES5规范中，第11.9.3节中4-5条说明：
 
 > 4. If Type(x) is Number and Type(y) is String,
 >    return the result of the comparison x == ToNumber(y).
 > 5. If Type(x) is String and Type(y) is Number,
 >    return the result of the comparison ToNumber(x) == y.
 
-**Warning:** The spec uses `Number` and `String` as the formal names for the types, while this book prefers `number` and `string` for the primitive types. Do not let the capitalization of `Number` in the spec confuse you for the `Number()` native function. For our purposes, the capitalization of the type name is irrelevant -- they have basically the same meaning.
+**警告：** 该规范使用`Number` 和 `String` 作为类型的正式名称，而本书更喜欢使用`number` 和 `string` 代表基本类型。不要被规范中的`Number`迷惑了，以为是本地函数`Number()`。对我们来说，类型名的大小写是无关紧要的——它们拥有相同的含义。
 
-Clearly, the spec says the `"42"` value is coerced to a `number` for the comparison. The *how* of that coercion has already been covered earlier, specifically with the `ToNumber` abstract operation. In this case, it's quite obvious then that the resulting two `42` values are equal.
+很显然，规范指明了`"42"`会被强制转成数字再进行比较。如何强制转换我们已经在前面的章节讲解了，特别是 `ToNumber` 抽象操作。在这里，最终的的两个结果都是`42`，很显然是相等的。
 
 #### Comparing: anything to `boolean`
 
