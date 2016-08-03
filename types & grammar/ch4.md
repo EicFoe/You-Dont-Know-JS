@@ -1433,6 +1433,7 @@ a == b;		// true
 
 > 4.If Type(x) is Number and Type(y) is String,
 >    return the result of the comparison x == ToNumber(y).
+>
 > 5.If Type(x) is String and Type(y) is Number,
 >    return the result of the comparison ToNumber(x) == y.
 
@@ -1463,6 +1464,7 @@ a == b;	// false
 
 > 6.If Type(x) is Boolean,
 >    return the result of the comparison ToNumber(x) == y.
+> 
 > 7.If Type(y) is Boolean,
 >    return the result of the comparison x == ToNumber(y).
 
