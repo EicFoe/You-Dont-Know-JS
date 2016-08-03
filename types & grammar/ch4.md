@@ -1431,9 +1431,9 @@ a == b;		// true
 
 在ES5规范中，第11.9.3节中4-5条说明：
 
-> 4. If Type(x) is Number and Type(y) is String,
+> 4.If Type(x) is Number and Type(y) is String,
 >    return the result of the comparison x == ToNumber(y).
-> 5. If Type(x) is String and Type(y) is Number,
+> 5.If Type(x) is String and Type(y) is Number,
 >    return the result of the comparison ToNumber(x) == y.
 
 **警告：** 该规范使用`Number` 和 `String` 作为类型的正式名称，而本书更喜欢使用`number` 和 `string` 代表基本类型。不要被规范中的`Number`迷惑了，以为是本地函数`Number()`。对我们来说，类型名的大小写是无关紧要的——它们拥有相同的含义。
@@ -1444,7 +1444,9 @@ a == b;		// true
 
 One of the biggest gotchas with the *implicit* coercion of `==` loose equality pops up when you try to compare a value directly to `true` or `false`.
 
-Consider:
+当你尝试将一个值和`true`或`false`进行非严格比较`==`时，**implicit** coercion 有个最大的陷阱。
+
+考虑如下：
 
 ```js
 var a = "42";
@@ -1453,18 +1455,18 @@ var b = true;
 a == b;	// false
 ```
 
-Wait, what happened here!? We know that `"42"` is a truthy value (see earlier in this chapter). So, how come it's not `==` loose equal to `true`?
+等等，这里发生了什么？我们知道`"42"`是个truthy的值（参见本章前面的内容）。所以，它为什么与`true`不（非严格）相等？
 
-The reason is both simple and deceptively tricky. It's so easy to misunderstand, many JS developers never pay close enough attention to fully grasp it.
+究其原因，看似棘手，实则简单。它是如此容易被误解，很多JS开发人员从来没有给予足够的关注来完全掌握它。
 
-Let's again quote the spec, clauses 11.9.3.6-7:
+让我们再次引用规范，在第11.9.3节，6-7条：
 
-> 6. If Type(x) is Boolean,
+> 6.If Type(x) is Boolean,
 >    return the result of the comparison ToNumber(x) == y.
-> 7. If Type(y) is Boolean,
+> 7.If Type(y) is Boolean,
 >    return the result of the comparison x == ToNumber(y).
 
-Let's break that down. First:
+举个例子：
 
 ```js
 var x = true;
@@ -1473,9 +1475,9 @@ var y = "42";
 x == y; // false
 ```
 
-The `Type(x)` is indeed `Boolean`, so it performs `ToNumber(x)`, which coerces `true` to `1`. Now, `1 == "42"` is evaluated. The types are still different, so (essentially recursively) we reconsult the algorithm, which just as above will coerce `"42"` to `42`, and `1 == 42` is clearly `false`.
+`Type(x)`是`Boolean`，所以它会进行`ToNumber(x)`转换，将`true`强制转成`1`。现在，`1 == "42"`进行比较。类型仍然是不同的，于是我们重新执行这个算法，正如上面所介绍的，会将`"42"`强转成`42`，而`1 == 42`的结果显然是`false`。
 
-Reverse it, and we still get the same outcome:
+倒转一下，结果仍然相同：
 
 ```js
 var x = "42";
@@ -1484,23 +1486,23 @@ var y = false;
 x == y; // false
 ```
 
-The `Type(y)` is `Boolean` this time, so `ToNumber(y)` yields `0`. `"42" == 0` recursively becomes `42 == 0`, which is of course `false`.
+这次`Type(y)`是`Boolean`，因此`ToNumber(y)`的结果是`0`。`"42" == 0`递归变成`42 == 0`，这个结果显然是`false`。
 
-In other words, **the value `"42"` is neither `== true` nor `== false`.** At first, that statement might seem crazy. How can a value be neither truthy nor falsy?
+换句话说，**`"42"`的值既不`== true`也不`== false`。** 第一次听到这种说法你肯定一脸懵逼。一个值怎么可能既不是truthy也不是falsy？
 
-But that's the problem! You're asking the wrong question, entirely. It's not your fault, really. Your brain is tricking you.
+但这就是问题所在！你完全问错了问题。这还真不是你的错。只是你的大脑在欺骗你。
 
-`"42"` is indeed truthy, but `"42" == true` **is not performing a boolean test/coercion** at all, no matter what your brain says. `"42"` *is not* being coerced to a `boolean` (`true`), but instead `true` is being coerced to a `1`, and then `"42"` is being coerced to `42`.
+`"42"`确实是truthy，但是 `"42" == true` **并没有进行布尔强制转换**，不管你的大脑如何说。`"42"` **并不会** 强制转成 `boolean`（`true`），相反，`true`会被强转成`1`，然后`"42"`会被转成`42`。
 
-Whether we like it or not, `ToBoolean` is not even involved here, so the truthiness or falsiness of `"42"` is irrelevant to the `==` operation!
+不管你喜不喜欢，这里根本就没有涉及到`ToBoolean`，所以`"42"`是truthiness还是falsiness，与`==`操作风马牛不相及。
 
-What *is* relevant is to understand how the `==` comparison algorithm behaves with all the different type combinations. As it regards a `boolean` value on either side of the `==`, a `boolean` always coerces to a `number` *first*.
+**真正** 需要理解的是，`==` 比较算法在不同类型组合下的表现行为。在`==`左边或右边的`boolean`值总是 **首先** 被转成数字。
 
-If that seems strange to you, you're not alone. I personally would recommend to never, ever, under any circumstances, use `== true` or `== false`. Ever.
+如果你觉得这很奇怪，放心，你并不孤单。我个人的建议是，在任何情况下，永远不要使用`== true` 或 `== false`。千万别用！！！
 
-But remember, I'm only talking about `==` here. `=== true` and `=== false` wouldn't allow the coercion, so they're safe from this hidden `ToNumber` coercion.
+但是请记住，我只是在这里讲解 `==`。`=== true` 和 `=== false` 是不允许强制转换的，所以对它们来说，根本不用担心隐式的`ToNumber`强制转换。
 
-Consider:
+考虑如下：
 
 ```js
 var a = "42";
@@ -1531,7 +1533,7 @@ if (Boolean( a )) {
 }
 ```
 
-If you avoid ever using `== true` or `== false` (aka loose equality with `boolean`s) in your code, you'll never have to worry about this truthiness/falsiness mental gotcha.
+如果你在你的代码中避免使用`== true` 或 `== false`（又名，与`boolean`进行非严格相等），你永远不用担心这个有关 truthiness/falsiness 的疑难杂症。
 
 #### Comparing: `null`s to `undefined`s
 
