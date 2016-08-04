@@ -1464,7 +1464,7 @@ a == b;	// false
 
 > 6.If Type(x) is Boolean,
 >    return the result of the comparison ToNumber(x) == y.
-> 
+>
 > 7.If Type(y) is Boolean,
 >    return the result of the comparison x == ToNumber(y).
 
@@ -1539,14 +1539,15 @@ if (Boolean( a )) {
 
 #### Comparing: `null`s to `undefined`s
 
-Another example of *implicit* coercion can be seen with `==` loose equality between `null` and `undefined` values. Yet again quoting the ES5 spec, clauses 11.9.3.2-3:
+在非严格相等`==`中发生 **implicit** coercion 的另外一个例子是 `null` 和 `undefined` 。再次引用ES5规范，第11.9.3节，2-3条：
 
-> 2. If x is null and y is undefined, return true.
-> 3. If x is undefined and y is null, return true.
+> 2.If x is null and y is undefined, return true.
+>
+> 3.If x is undefined and y is null, return true.
 
-`null` and `undefined`, when compared with `==` loose equality, equate to (aka coerce to) each other (as well as themselves, obviously), and no other values in the entire language.
+当 `null` 和 `undefined` 进行非严格比较，彼此相等（当然也等于它们本身），并且在整个语言中没有其他值与它们相等。
 
-What this means is that `null` and `undefined` can be treated as indistinguishable for comparison purposes, if you use the `==` loose equality operator to allow their mutual *implicit* coercion.
+这意味着在进行非严格比较时（允许发生 **implicit** coercion），难以区分 `null` 和 `undefined`。
 
 ```js
 var a = null;
@@ -1564,9 +1565,9 @@ a == 0;		// false
 b == 0;		// false
 ```
 
-The coercion between `null` and `undefined` is safe and predictable, and no other values can give false positives in such a check. I recommend using this coercion to allow `null` and `undefined` to be indistinguishable and thus treated as the same value.
+`null` 和 `undefined` 之间的 coercion 是安全的和可预测的，并且没有其他值在这样的比较下会得到 `true`。我建议你使用这个 coercion 允许 `null` 和 `undefined` 变得难以区分，这样你可以把它们视为相同的值。
 
-For example:
+例如：
 
 ```js
 var a = doSomething();
@@ -1576,9 +1577,9 @@ if (a == null) {
 }
 ```
 
-The `a == null` check will pass only if `doSomething()` returns either `null` or `undefined`, and will fail with any other value, even other falsy values like `0`, `false`, and `""`.
+只有当 `doSomething()` 返回 `null` 或 `undefined` 的时候，`a == null`才会通过，如果是其他值则会失败，甚至是 falsy 值如：`0`, `false` 和 `""`。
 
-The *explicit* form of the check, which disallows any such coercion, is (I think) unnecessarily much uglier (and perhaps a tiny bit less performant!):
+这种检测的显式形式（不允许发生强制转换），我认为没有必要并且不好看（可能性能上也稍微逊色！）：
 
 ```js
 var a = doSomething();
@@ -1588,7 +1589,7 @@ if (a === undefined || a === null) {
 }
 ```
 
-In my opinion, the form `a == null` is yet another example where *implicit* coercion improves code readability, but does so in a reliably safe way.
+在我看来，`a == null` 这种形式是 **implicit** coercion 提高代码可读性的另外一个例子，并且这么做安全又可靠。
 
 #### Comparing: `object`s to non-`object`s
 
