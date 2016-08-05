@@ -1611,7 +1611,7 @@ var b = [ 42 ];
 a == b;	// true
 ```
 
-`[ 42 ]` 调用了它的抽象操作 `ToPrimitive` （参见前面的章节 "Abstract Value Operations"），得到的结果是`"42"`。到这，就成了比较`42 == "42"`，之间已经讲了，这个比较会被转成`42 == 42`，所以`a` 和 `b` 非严格相等（强制转换后相等）。
+`[ 42 ]` 调用了它的抽象操作 `ToPrimitive` （参见前面的章节 "Abstract Value Operations"），得到的结果是`"42"`。到这，就成了比较`42 == "42"`，之前已经讲了，这个比较会被转成`42 == 42`，所以`a` 和 `b` 非严格相等（强制转换后相等）。
 
 **提示：** 我们在本章前面所讨论的 `ToPrimitive` 抽象操作的所有怪癖（`toString()`, `valueOf()`），在这里同样适用。如果你有一个复杂的数据结构，并且你想自定义它的 `valueOf()` 方法，为相等比较提供一个简单的值，你会发现这是非常有用的。
 
@@ -1649,9 +1649,9 @@ e == f;					// false
 
 ### Edge Cases
 
-Now that we've thoroughly examined how the *implicit* coercion of `==` loose equality works (in both sensible and surprising ways), let's try to call out the worst, craziest corner cases so we can see what we need to avoid to not get bitten with coercion bugs.
+现在我们已经仔细研究了非严格比较中的隐式强制转换是如何工作的（既有合理之处也有令人惊讶的地方），让我们尝试召唤出最糟糕的，最疯狂的边缘情况，这样我们就知道应该如何避免这些强制转换的bugs，防止入坑。
 
-First, let's examine how modifying the built-in native prototypes can produce crazy results:
+首先，让我们来看看，修改内置的本地原型会产生什么样的疯狂结果：
 
 #### A Number By Any Other Value Would...
 
