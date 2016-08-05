@@ -1593,16 +1593,16 @@ if (a === undefined || a === null) {
 
 #### Comparing: `object`s to non-`object`s
 
-If an `object`/`function`/`array` is compared to a simple scalar primitive (`string`, `number`, or `boolean`), the ES5 spec says in clauses 11.9.3.8-9:
+如果 `object`/`function`/`array` 与基本原始类型（`string`, `number` 或 `boolean`）进行比较，请看ES5规范第11.9.3的8-9条：
 
 > 8. If Type(x) is either String or Number and Type(y) is Object,
 >    return the result of the comparison x == ToPrimitive(y).
 > 9. If Type(x) is Object and Type(y) is either String or Number,
 >    return the result of the comparison ToPrimitive(x) == y.
 
-**Note:** You may notice that these clauses only mention `String` and `Number`, but not `Boolean`. That's because, as quoted earlier, clauses 11.9.3.6-7 take care of coercing any `Boolean` operand presented to a `Number` first.
+**注意：** 你可能注意到上面两条规范只提到了 `String` 和 `Number`，没有`Boolean`。这是因为，在之前引用的11.9.3.6-7已经讲解了，会将任何的 `Boolean` 操作数首先强制转成 `Number`。
 
-Consider:
+考虑如下：
 
 ```js
 var a = 42;
@@ -1611,11 +1611,11 @@ var b = [ 42 ];
 a == b;	// true
 ```
 
-The `[ 42 ]` value has its `ToPrimitive` abstract operation called (see the "Abstract Value Operations" section earlier), which results in the `"42"` value. From there, it's just `42 == "42"`, which as we've already covered becomes `42 == 42`, so `a` and `b` are found to be coercively equal.
+`[ 42 ]` 调用了它的抽象操作 `ToPrimitive` （参见前面的章节 "Abstract Value Operations"），得到的结果是`"42"`。到这，就成了比较`42 == "42"`，之间已经讲了，这个比较会被转成`42 == 42`，所以`a` 和 `b` 非严格相等（强制转换后相等）。
 
-**Tip:** All the quirks of the `ToPrimitive` abstract operation that we discussed earlier in this chapter (`toString()`, `valueOf()`) apply here as you'd expect. This can be quite useful if you have a complex data structure that you want to define a custom `valueOf()` method on, to provide a simple value for equality comparison purposes.
+**提示：** 我们在本章前面所讨论的 `ToPrimitive` 抽象操作的所有怪癖（`toString()`, `valueOf()`），在这里同样适用。如果你有一个复杂的数据结构，并且你想自定义它的 `valueOf()` 方法，为相等比较提供一个简单的值，你会发现这是非常有用的。
 
-In Chapter 3, we covered "unboxing," where an `object` wrapper around a primitive value (like from `new String("abc")`, for instance) is unwrapped, and the underlying primitive value (`"abc"`) is returned. This behavior is related to the `ToPrimitive` coercion in the `==` algorithm:
+在第三章中，我们介绍了“拆箱”，就是将包裹着原始值的对象（比如：`new String("abc")`）拆解，获取它底层的原始值（`"abc"`）。这种行为与 `==` 算法中的 `ToPrimitive` coercion 相关：
 
 ```js
 var a = "abc";
@@ -1625,9 +1625,9 @@ a === b;				// false
 a == b;					// true
 ```
 
-`a == b` is `true` because `b` is coerced (aka "unboxed," unwrapped) via `ToPrimitive` to its underlying `"abc"` simple scalar primitive value, which is the same as the value in `a`.
+`a == b` 的结果是 `true`，因为 `b` 通过 `ToPrimitive` 抽象操作强制转成（又叫“拆箱”）了它底层的简单类型的原始值 `"abc"`，这个值和 `a` 的值是相等的。
 
-There are some values where this is not the case, though, because of other overriding rules in the `==` algorithm. Consider:
+这里也有一些特殊值不满足这种情况，因为有些其他的规则覆盖了 `==` 算法的规则。考虑如下：
 
 ```js
 var a = null;
@@ -1643,9 +1643,9 @@ var f = Object( e );	// same as `new Number( e )`
 e == f;					// false
 ```
 
-The `null` and `undefined` values cannot be boxed -- they have no object wrapper equivalent -- so `Object(null)` is just like `Object()` in that both just produce a normal object.
+`null` 和 `undefined` 不能被装箱——它们没有与之对应的封装对象——所以 `Object(null)` 就跟 `Object()` 的作用一样，只产生一个正常的对象。
 
-`NaN` can be boxed to its `Number` object wrapper equivalent, but when `==` causes an unboxing, the `NaN == NaN` comparison fails because `NaN` is never equal to itself (see Chapter 2).
+`NaN` 可以被装箱到与之等价的 `Number` 封装对象，但是当 `==` 操作导致拆箱时，`NaN == NaN` 比较会失败，因为 `NaN` 永远不会等于它本身（参见第二章）。
 
 ### Edge Cases
 
