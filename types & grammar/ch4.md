@@ -1663,11 +1663,13 @@ Number.prototype.valueOf = function() {
 new Number( 2 ) == 3;	// true
 ```
 
-**Warning:** `2 == 3` would not have fallen into this trap, because neither `2` nor `3` would have invoked the built-in `Number.prototype.valueOf()` method because both are already primitive `number` values and can be compared directly. However, `new Number(2)` must go through the `ToPrimitive` coercion, and thus invoke `valueOf()`.
+**警告：** `2 == 3` 不会掉入这个陷阱，因为无论是 `2` 还是 `3` 都不会调用内置的 `Number.prototype.valueOf()` 方法，因为它们都已经是原始的数值，可以直接进行比较。然而，`new Number(2)` 必须通过 `ToPrimitive` 强制转换，所以会调用 `valueOf()` 方法。
 
 Evil, huh? Of course it is. No one should ever do such a thing. The fact that you *can* do this is sometimes used as a criticism of coercion and `==`. But that's misdirected frustration. JavaScript is not *bad* because you can do such things, a developer is *bad* **if they do such things**. Don't fall into the "my programming language should protect me from myself" fallacy.
 
-Next, let's consider another tricky example, which takes the evil from the previous example to another level:
+很邪恶，对吗？当然如此。任何人都不应该做这样的事情。事实上，你只有在批评 JS coercion 和 `==` 的时候，才会这么做。但是这确实很误导人。因为你可以怎么做并不意味着 JavaScript 是 **不好的**，但是，**如果有人做这样的事情**，说明这个开发者是 **不好的**。不要陷入“编程语言应该保护我免受自己的伤害”的谬论。
+
+接下来，让我们考虑另外一个棘手的例子，这会将前面的例子带到更深层次的邪恶：
 
 ```js
 if (a == 2 && a == 3) {
@@ -1675,9 +1677,9 @@ if (a == 2 && a == 3) {
 }
 ```
 
-You might think this would be impossible, because `a` could never be equal to both `2` and `3` *at the same time*. But "at the same time" is inaccurate, since the first expression `a == 2` happens strictly *before* `a == 3`.
+你可能会认为这是不可能的，因为 `a` 永远不可能 **在同一时间** 既等于 `2` 又等于 `3`。但是“在同一时间”这是不准确的说法，严格上来讲，第一个表达式 `a == 2` 一定在 `a == 3` 之前发生。
 
-So, what if we make `a.valueOf()` have side effects each time it's called, such that the first time it returns `2` and the second time it's called it returns `3`? Pretty easy:
+如果我们每次调用 `a.valueOf()` 的时候，都让它产生副作用，比如，第一次调用返回 `2`，第二次调用返回 `3`，可以吗？其实很简单：
 
 ```js
 var i = 2;
@@ -1693,7 +1695,7 @@ if (a == 2 && a == 3) {
 }
 ```
 
-Again, these are evil tricks. Don't do them. But also don't use them as complaints against coercion. Potential abuses of a mechanism are not sufficient evidence to condemn the mechanism. Just avoid these crazy tricks, and stick only with valid and proper usage of coercion.
+再次强调，这都是些邪恶的招数。千万不要这么做。也不要用它们来抱怨投诉 coercion。一个机制存在被滥用的可能性，这不能作为足够的证据来谴责该机制。只要避免这些疯狂的技巧，并且坚持有效和正确的使用 coercion。
 
 #### False-y Comparisons
 
