@@ -1667,7 +1667,7 @@ new Number( 2 ) == 3;	// true
 
 Evil, huh? Of course it is. No one should ever do such a thing. The fact that you *can* do this is sometimes used as a criticism of coercion and `==`. But that's misdirected frustration. JavaScript is not *bad* because you can do such things, a developer is *bad* **if they do such things**. Don't fall into the "my programming language should protect me from myself" fallacy.
 
-很邪恶，对吗？当然如此。任何人都不应该做这样的事情。事实上，你只有在批评 JS coercion 和 `==` 的时候，才会这么做。但是这确实很误导人。因为你可以怎么做并不意味着 JavaScript 是 **不好的**，但是，**如果有人做这样的事情**，说明这个开发者是 **不好的**。不要陷入“编程语言应该保护我免受自己的伤害”的谬论。
+很邪恶，对吗？当然如此。任何人都不应该做这样的事情。事实上，你只有在批评 JS coercion 和 `==` 的时候，才会这么做。但是这确实很误导人。因为你可以这么做并不意味着 JavaScript 是 **不好的**，但是，**如果有人做这样的事情**，说明这个开发者是 **不好的**。不要陷入“编程语言应该保护我免受自己的伤害”的谬论。
 
 接下来，让我们考虑另外一个棘手的例子，这会将前面的例子带到更深层次的邪恶：
 
@@ -1695,13 +1695,13 @@ if (a == 2 && a == 3) {
 }
 ```
 
-再次强调，这都是些邪恶的招数。千万不要这么做。也不要用它们来抱怨投诉 coercion。一个机制存在被滥用的可能性，这不能作为足够的证据来谴责该机制。只要避免这些疯狂的技巧，并且坚持有效和正确的使用 coercion。
+再次强调，这都是些邪恶的招数。千万不要这么做。也不要用它们来投诉抱怨 coercion。一个机制存在被滥用的可能性，这不能作为足够的证据来谴责该机制。只要避免这些疯狂的技巧，并且坚持有效和正确的使用 coercion。
 
 #### False-y Comparisons
 
-The most common complaint against *implicit* coercion in `==` comparisons comes from how falsy values behave surprisingly when compared to each other.
+针对 `==` 比较中的 **implicit** coercion 最常见的抱怨来自 falsy 值相互比较时，令人惊讶的表现。
 
-To illustrate, let's look at a list of the corner-cases around falsy value comparisons, to see which ones are reasonable and which are troublesome:
+为了说明这一点，让我们来看看 falsy 值比较的一些边缘案例，看看哪些是合理的，哪些是麻烦的：
 
 ```js
 "0" == null;			// false
@@ -1733,9 +1733,11 @@ false == {};			// false
 0 == {};				// false
 ```
 
-In this list of 24 comparisons, 17 of them are quite reasonable and predictable. For example, we know that `""` and `NaN` are not at all equatable values, and indeed they don't coerce to be loose equals, whereas `"0"` and `0` are reasonably equatable and *do* coerce as loose equals.
+在这24个比较中，17个是相当合理和可预测的。例如，我们知道 `""` 和 `NaN` 是不相等的值，事实上，它们并没有进行强制转换来执行非严格比较，而 `"0"` 和 `0` 相等是非常合理的，它们在非严格比较中进行了强制转换。
 
 However, seven of the comparisons are marked with "UH OH!" because as false positives, they are much more likely gotchas that could trip you up. `""` and `0` are definitely distinctly different values, and it's rare you'd want to treat them as equatable, so their mutual coercion is troublesome. Note that there aren't any false negatives here.
+
+然而，7个标记了"UH OH!"的比较，因为是误报，它们更像是可能将你绊倒的陷阱。`""` 和 `0` 肯定是截然不同的值，非常罕见你会想要将它们视为相等的值，所以它们相互强制转换是很麻烦的。请注意，这里没有任何错误否定。
 
 #### The Crazy Ones
 
