@@ -1741,54 +1741,60 @@ However, seven of the comparisons are marked with "UH OH!" because as false posi
 
 #### The Crazy Ones
 
-We don't have to stop there, though. We can keep looking for even more troublesome coercions:
+然而我们没必要就此打住。我们可以继续寻找更麻烦的 coercions 的例子：
 
 ```js
 [] == ![];		// true
 ```
 
-Oooo, that seems at a higher level of crazy, right!? Your brain may likely trick you that you're comparing a truthy to a falsy value, so the `true` result is surprising, as we *know* a value can never be truthy and falsy at the same time!
+WTF？这似乎是个更好水平的疯狂案例，是不是！？你的大脑可能会欺骗你，你正在比较一个 truthy 值和一个 falsy 值，而结果是令人惊讶的 `true`，正如我们 **所知道** 的，一个值永远不可能在同一时间既是 truthy 又是 falsy 的。
 
-But that's not what's actually happening. Let's break it down. What do we know about the `!` unary operator? It explicitly coerces to a `boolean` using the `ToBoolean` rules (and it also flips the parity). So before `[] == ![]` is even processed, it's actually already translated to `[] == false`. We already saw that form in our above list (`false == []`), so its surprise result is *not new* to us.
+但是，实际上发生的事情不是你想得那样。让我们来分析一下。我们知道一元操作符 `!` 的作用吗？它会显式的将一个值使用 `ToBoolean` 规则强制转成 `boolean`（它同时也翻转奇偶位）。所以在处理 `[] == ![]` 之前，它实际上已经被转化成 `[] == false`。我们已经在上面的列表中看到过这种形式（`false == []`），所以它的惊喜效果对我们来说 **并不新鲜**。
 
-How about other corner cases?
+关于其他的边缘案例呢？
 
 ```js
 2 == [2];		// true
 "" == [null];	// true
 ```
 
-As we said earlier in our `ToNumber` discussion, the right-hand side `[2]` and `[null]` values will go through a `ToPrimitive` coercion so they can be more readily compared to the simple primitives (`2` and `""`, respectively) on the left-hand side. Since the `valueOf()` for `array` values just returns the `array` itself, coercion falls to stringifying the `array`.
+正如我们在前面讨论的 `ToNumber`，右边的值 `[2]` 和 `[null]` 会经过 `ToPrimitive` coercion，使得它们能够更容易地与左边的原始值（分别指 `2` 和 `""`）进行比较。因为数组的 `valueOf()` 方法只会返回数组本身，所以强制将数组转成字符串会失败。
 
-`[2]` will become `"2"`, which then is `ToNumber` coerced to `2` for the right-hand side value in the first comparison. `[null]` just straight becomes `""`.
+`[2]` 会转成 `"2"`，然后经过 `ToNumber` 将 `"2"` 强制转成 `2`。`[null]` 则直接变成 `""`。
 
-So, `2 == 2` and `"" == ""` are completely understandable.
+而 `2 == 2` 和 `"" == ""` 是完全可以理解的。
 
-If your instinct is to still dislike these results, your frustration is not actually with coercion like you probably think it is. It's actually a complaint against the default `array` values' `ToPrimitive` behavior of coercing to a `string` value. More likely, you'd just wish that `[2].toString()` didn't return `"2"`, or that `[null].toString()` didn't return `""`.
+如果你从心底还是不喜欢这些结果，你的挫败感可能不是来自于你所想象的 coercion。事实上，你是在抱怨强制将数组值转成字符串的 `ToPrimitive` 的行为。更有可能的是，你只是希望 `[2].toString()` 不返回 `"2"`，`[null].toString()` 不返回 `""`。
 
-But what exactly *should* these `string` coercions result in? I can't really think of any other appropriate `string` coercion of `[2]` than `"2"`, except perhaps `"[2]"` -- but that could be very strange in other contexts!
+那数组强制转成字符串的结果 **应该** 返回什么呢？我真的没法想象除 `"2"` 之外的 coercion 结果，也许除了 `"[2]"`——但是它在其他情况下可能会变得很奇怪！
 
-You could rightly make the case that since `String(null)` becomes `"null"`, then `String([null])` should also become `"null"`. That's a reasonable assertion. So, that's the real culprit.
+正常情况下，`String(null)` 的结果是 `"null"`，所以你认为，`String([null])` 的结果也应该是 `"null"`。这是个合理的说法，但是这才是真正的罪魁祸首。
 
 *Implicit* coercion itself isn't the evil here. Even an *explicit* coercion of `[null]` to a `string` results in `""`. What's at odds is whether it's sensible at all for `array` values to stringify to the equivalent of their contents, and exactly how that happens. So, direct your frustration at the rules for `String( [..] )`, because that's where the craziness stems from. Perhaps there should be no stringification coercion of `array`s at all? But that would have lots of other downsides in other parts of the language.
 
-Another famously cited gotcha:
+**Implicit** coercion 在这本身并不邪恶。即使在 **explicit** coercion 中将 `[null]` 强制转成字符串得到的结果也是`""`。真正的分歧在于，如何 **合理地** 将数组字符串化成与之等价的内容。所以，请将你的挫败感转向 `String( [..] )` 的规则，因为这是疯狂的源头。也许语言不应该将数组字符串化？但是这样的话，在语言的其他部分会有很多的负面影响。
+
+另一个著名的疑难杂症：
 
 ```js
 0 == "\n";		// true
 ```
 
-As we discussed earlier with empty `""`, `"\n"` (or `" "` or any other whitespace combination) is coerced via `ToNumber`, and the result is `0`. What other `number` value would you expect whitespace to coerce to? Does it bother you that *explicit* `Number(" ")` yields `0`?
+正如我们在前面讨论过的空字符串 `""`、`"\n"`（或`" "`，以及其他空格组合），会经过 `ToNumber` 强制转换，其结果是 `0`。你还能期望它转成其他的数字吗？ **显式地** 使用 `Number(" ")` 得到结果 `0` 碍着你了？
 
-Really the only other reasonable `number` value that empty strings or whitespace strings could coerce to is the `NaN`. But would that *really* be better? The comparison `" " == NaN` would of course fail, but it's unclear that we'd have really *fixed* any of the underlying concerns.
+将空字符串或空白字符串强制转成数字，真正唯一合理的其他数字是 `NaN`。但是这样 **真的** 会变得更好吗？`" " == NaN` 这个比较肯定是会失败的，但是目前还不清楚，我们是否真的 **修复** 了其他潜在的担忧。
 
-The chances that a real-world JS program fails because `0 == "\n"` are awfully rare, and such corner cases are easy to avoid.
+因为 `0 == "\n"` 非常罕见，所以在真实世界中的JS程序一不小心就失败，但是这样的边缘案例是很容易避免的。
 
 Type conversions **always** have corner cases, in any language -- nothing specific to coercion. The issues here are about second-guessing a certain set of corner cases (and perhaps rightly so!?), but that's not a salient argument against the overall coercion mechanism.
 
+在任何语言中，类型转换总是有边缘案例——并不是 coercion 特有的。这里只是讨论一组边缘案例的特定情况，但这并不是一个针对整个 coercion 机制突出的论点。
+
 Bottom line: almost any crazy coercion between *normal values* that you're likely to run into (aside from intentionally tricky `valueOf()` or `toString()` hacks as earlier) will boil down to the short seven-item list of gotcha coercions we've identified above.
 
-To contrast against these 24 likely suspects for coercion gotchas, consider another list like this:
+底线：你可能碰到的几乎所有的 **正常值** 之间的强制转换都可以归结为七个强制转换的陷阱，我们在前面提到过（除了之前故意hack `valueOf()` 或 `toString()`）。
+
+与之前列出的24条强制转换陷阱对比，可以考虑如下的另一个列表：
 
 ```js
 42 == "43";							// false
@@ -1799,7 +1805,7 @@ To contrast against these 24 likely suspects for coercion gotchas, consider anot
 "foo" == [ "foo" ];					// true
 ```
 
-In these nonfalsy, noncorner cases (and there are literally an infinite number of comparisons we could put on this list), the coercion results are totally safe, reasonable, and explainable.
+在这些非 falsy，非极端情况（事实上这个列表有无限多个比较案例）下，coercion 的结果是完全安全的、合理的以及可解释的。
 
 #### Sanity Check
 
