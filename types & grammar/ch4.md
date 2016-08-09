@@ -1807,19 +1807,19 @@ Bottom line: almost any crazy coercion between *normal values* that you're likel
 
 在这些非 falsy，非极端情况（事实上这个列表有无限多个比较案例）下，coercion 的结果是完全安全的、合理的以及可解释的。
 
-#### Sanity Check
+#### Sanity Check（完整性检查）
 
-OK, we've definitely found some crazy stuff when we've looked deeply into *implicit* coercion. No wonder that most developers claim coercion is evil and should be avoided, right!?
+OK，当我们深入探索 **implicit** coercion 时，你肯定发现了一些疯狂的东西。难怪大多数开发者都声称 coercion 是邪恶的，应该尽量避免它，你觉得呢？
 
-But let's take a step back and do a sanity check.
+但是让我们退后一步，做一个全面的检查。
 
-By way of magnitude comparison, we have *a list* of seven troublesome gotcha coercions, but we have *another list* of (at least 17, but actually infinite) coercions that are totally sane and explainable.
+通过大小比较的方式，我们得到了七个关于 coercion 的疑难杂症列表，但是我们有另外一个列表（至少有17个，实际上是无限的）的例子，能够说明 coercion 是完全理智和可解释的。
 
-If you're looking for a textbook example of "throwing the baby out with the bathwater," this is it: discarding the entirety of coercion (the infinitely large list of safe and useful behaviors) because of a list of literally just seven gotchas.
+如果你正在寻找“把宝宝和洗澡水一起倒掉”的典型例子，这就是一个鲜活的例子：仅仅因为7个疑难杂症的例子，就丢弃掉 coercion 的全部内容（无限多的安全和有益的行为）。
 
-The more prudent reaction would be to ask, "how can I use the countless *good parts* of coercion, but avoid the few *bad parts*?"
+更谨慎的反应应该这么问：“我如何使用那无限多的 coercion 的 **精粹**，而避免那少数的 **糟粕** ？”
 
-Let's look again at the *bad* list:
+我们再来看看这个 **糟粕** 的名单：
 
 ```js
 "0" == false;			// true -- UH OH!
@@ -1831,9 +1831,9 @@ false == [];			// true -- UH OH!
 0 == [];				// true -- UH OH!
 ```
 
-Four of the seven items on this list involve `== false` comparison, which we said earlier you should **always, always** avoid. That's a pretty easy rule to remember.
+7个条目中的4个与 `== false` 比较相关，这个我们在前面说过，你 **应该总是，应该总是** 避免这种情况。这个简单的规则很容易记住。
 
-Now the list is down to three.
+现在这个列表减少到3个。
 
 ```js
 "" == 0;				// true -- UH OH!
@@ -1841,9 +1841,9 @@ Now the list is down to three.
 0 == [];				// true -- UH OH!
 ```
 
-Are these reasonable coercions you'd do in a normal JavaScript program? Under what conditions would they really happen?
+在一个正常的 JavaScript 程序中，你认为这些 coercions 是合理的吗？在什么情况下会发生这种比较？
 
-I don't think it's terribly likely that you'd literally use `== []` in a `boolean` test in your program, at least not if you know what you're doing. You'd probably instead be doing `== ""` or `== 0`, like:
+我不认为你在你的程序中会直接使用 `== []` 来进行布尔测试，除非你知道你自己在做什么。你很有可能是在进行 `== ""` 或 `== 0` 测试，例如：
 
 ```js
 function doSomething(a) {
@@ -1853,7 +1853,7 @@ function doSomething(a) {
 }
 ```
 
-You'd have an oops if you accidentally called `doSomething(0)` or `doSomething([])`. Another scenario:
+如果你不小心调用了 `doSomething(0)` 或 `doSomething([])`，你就会大吃一惊（you'd have an oops）。另外一种情况：
 
 ```js
 function doSomething(a,b) {
@@ -1863,9 +1863,11 @@ function doSomething(a,b) {
 }
 ```
 
-Again, this could break if you did something like `doSomething("",0)` or `doSomething([],"")`.
+同样，如果你调用 `doSomething("",0)` 或 `doSomething([],"")`，这个函数就会失败。
 
 So, while the situations *can* exist where these coercions will bite you, and you'll want to be careful around them, they're probably not super common on the whole of your code base.
+
+尽管这些情况 **存在** 并且这些 coercions 很可能会咬你，而你也希望碰到它们的时候要格外小心，但它们在整个代码库中不是很参见。
 
 #### Safely Using Implicit Coercion
 
