@@ -1871,32 +1871,34 @@ So, while the situations *can* exist where these coercions will bite you, and yo
 
 #### Safely Using Implicit Coercion
 
-The most important advice I can give you: examine your program and reason about what values can show up on either side of an `==` comparison. To effectively avoid issues with such comparisons, here's some heuristic rules to follow:
+我能给你的最重要的建议是：检查你的程序，推理出什么值可以出现在 `==` 比较的两边。为了有效地避免这种比较的问题，这里有一些启发式的规则可以遵循：
 
-1. If either side of the comparison can have `true` or `false` values, don't ever, EVER use `==`.
-2. If either side of the comparison can have `[]`, `""`, or `0` values, seriously consider not using `==`.
+1. 如果比较的两边有 `true` 或 `false`，永远不要使用 `==`。
+2. 如果比较的两边有 `[]`，`""` 或 `0`，认真考虑，最好不要使用 `==`。
 
-In these scenarios, it's almost certainly better to use `===` instead of `==`, to avoid unwanted coercion. Follow those two simple rules and pretty much all the coercion gotchas that could reasonably hurt you will effectively be avoided.
+在这些情况下，你最好使用 `===` 代替 `==`，以避免不必要的 coercion。遵循这两个简单的规则，你可以有效地避免几乎所有能够伤害你的 coercion 陷阱。
 
 **Being more explicit/verbose in these cases will save you from a lot of headaches.**
 
-The question of `==` vs. `===` is really appropriately framed as: should you allow coercion for a comparison or not?
+**在这些情况下，变得更明确和详细，能够为你省去很多麻烦。**
 
-There's lots of cases where such coercion can be helpful, allowing you to more tersely express some comparison logic (like with `null` and `undefined`, for example).
+`==` vs `===` 的问题可以归结为：在进行相等比较时候，是否应该允许 coercion ？
 
-In the overall scheme of things, there's relatively few cases where *implicit* coercion is truly dangerous. But in those places, for safety sake, definitely use `===`.
+在很多情况中，这种 coercion 是非常有帮助的，它能帮你更简洁地表达一些比较逻辑（如`null` 和 `undefined`）。
 
-**Tip:** Another place where coercion is guaranteed *not* to bite you is with the `typeof` operator. `typeof` is always going to return you one of seven strings (see Chapter 1), and none of them are the empty `""` string. As such, there's no case where checking the type of some value is going to run afoul of *implicit* coercion. `typeof x == "function"` is 100% as safe and reliable as `typeof x === "function"`. Literally, the spec says the algorithm will be identical in this situation. So, don't just blindly use `===` everywhere simply because that's what your code tools tell you to do, or (worst of all) because you've been told in some book to **not think about it**. You own the quality of your code.
+总体来看，**implicit** coercion 只在相对较少的情况下，是真正危险的。但是，在那些情况下，为了安全起见，肯定使用 `===`。
 
-Is *implicit* coercion evil and dangerous? In a few cases, yes, but overwhelmingly, no.
+**提示：** coercion 保证 **不会坑你** 的另外一个地方是 `typeof` 操作符。`typeof` 总是会返回七个字符串之一（见第一章），并且没有一个是空字符串 `""`。正因为如此，这里不会发生类型的隐式强制转换。`typeof x == "function"` 和 `typeof x === "function"` 一样，百分之百安全可靠。从字面上看，规范说明了在这种情况下算法是一样的。所以，不要一味地到处使用 `===`，仅仅是因为你的代码工具告诉你要这么做，或者（最糟糕的）因为一些书告诉你 **不要去考虑它**。你代码的质量由你自己决定。
 
-Be a responsible and mature developer. Learn how to use the power of coercion (both *explicit* and *implicit*) effectively and safely. And teach those around you to do the same.
+**implicit** coercion 是邪恶和危险的吗？在少数情况下，是的；当总体来说，不是的。
 
-Here's a handy table made by Alex Dorey (@dorey on GitHub) to visualize a variety of comparisons:
+作为一个负责任和成熟的开发者，应该学会如何有效和安全地使用 coercion （包括 **explicit** 和 **implicit**）的力量，并且教会你周围的人做同样的事。
+
+这里是 Alex Dorey(@dorey on GitHub) 制作的各种比较的可视化表格：
 
 <img src="fig1.png" width="600">
 
-Source: https://github.com/dorey/JavaScript-Equality-Table
+来源: https://github.com/dorey/JavaScript-Equality-Table
 
 ## Abstract Relational Comparison
 
