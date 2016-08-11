@@ -1902,15 +1902,15 @@ So, while the situations *can* exist where these coercions will bite you, and yo
 
 ## Abstract Relational Comparison
 
-While this part of *implicit* coercion often gets a lot less attention, it's important nonetheless to think about what happens with `a < b` comparisons (similar to how we just examined `a == b` in depth).
+虽然这部分内容的 **implicit** coercion 很少有人关注，然而，认真思考 `a < b` 这个比较发生了什么（类似于我们如何深入检测 `a == b`），是非常重要的。
 
-The "Abstract Relational Comparison" algorithm in ES5 section 11.8.5 essentially divides itself into two parts: what to do if the comparison involves both `string` values (second half), or anything else (first half).
+在ES5的11.8.5节“Abstract Relational Comparison”中，该算法可以分为两部分：如果比较的两个值都是字符串，该如何比较（下半部分）；如果比较的值是其他情况，该如何比较（上半部分）。
 
-**Note:** The algorithm is only defined for `a < b`. So, `a > b` is handled as `b < a`.
+**注意：** 这个算法只定义了 `a < b` 的情况。因此，`a > b` 会被当成 `b < a` 来处理。
 
-The algorithm first calls `ToPrimitive` coercion on both values, and if the return result of either call is not a `string`, then both values are coerced to `number` values using the `ToNumber` operation rules, and compared numerically.
+该算法首先在两个值上调用 `ToPrimitive` coercion，如果两个调用结果不都是 `string`，那么就会对这两个值使用 `ToNumber` 操作规则强制转成 `number`，然后进行数值比较。
 
-For example:
+例如：
 
 ```js
 var a = [ 42 ];
@@ -1920,9 +1920,9 @@ a < b;	// true
 b < a;	// false
 ```
 
-**Note:** Similar caveats for `-0` and `NaN` apply here as they did in the `==` algorithm discussed earlier.
+**注意：** `-0` 和 `NaN` 的注意事项和我们之前讨论过的 `==` 比较算法中的一样。
 
-However, if both values are `string`s for the `<` comparison, simple lexicographic (natural alphabetic) comparison on the characters is performed:
+然而，如果 `<` 比较的两个操作数都是字符串，就会按简单的字典序（自然的字母数字排序）对字符串进行比较：
 
 ```js
 var a = [ "42" ];
@@ -1931,9 +1931,9 @@ var b = [ "043" ];
 a < b;	// false
 ```
 
-`a` and `b` are *not* coerced to `number`s, because both of them end up as `string`s after the `ToPrimitive` coercion on the two `array`s. So, `"42"` is compared character by character to `"043"`, starting with the first characters `"4"` and `"0"`, respectively. Since `"0"` is lexicographically *less than* than `"4"`, the comparison returns `false`.
+`a` 和 `b` **不会** 被强转成数字，因为两个数组经过 `ToPrimitive` coercion 得到的是两个字符串。因此，`"42"` 与 `"043"` 逐个字符进行比较，分别从第一个字符 `"4"` 和 `"0"`开始。因为 `"0"` 的字典顺序比 `"4"` **小**，所以比较的结果是 `false`。
 
-The exact same behavior and reasoning goes for:
+完全相同的行为和理由，也适用于如下情况：
 
 ```js
 var a = [ 4, 2 ];
@@ -1942,9 +1942,9 @@ var b = [ 0, 4, 3 ];
 a < b;	// false
 ```
 
-Here, `a` becomes `"4,2"` and `b` becomes `"0,4,3"`, and those lexicographically compare identically to the previous snippet.
+在这里，`a` 变成了 `"4,2"`，`b` 变成了 `"0,4,3"`，而这个字典序比较和上面代码相同。
 
-What about:
+那关于如下这个例子：
 
 ```js
 var a = { b: 42 };
@@ -1953,9 +1953,9 @@ var b = { b: 43 };
 a < b;	// ??
 ```
 
-`a < b` is also `false`, because `a` becomes `[object Object]` and `b` becomes `[object Object]`, and so clearly `a` is not lexicographically less than `b`.
+`a < b` 的结果也是 `false`，因为 `a` 和 `b` 都会变成 `[object Object]`，很明显，`a` 的字典顺序并不比 `b` 小。
 
-But strangely:
+但奇怪的是：
 
 ```js
 var a = { b: 42 };
@@ -1969,17 +1969,17 @@ a <= b;	// true
 a >= b;	// true
 ```
 
-Why is `a == b` not `true`? They're the same `string` value (`"[object Object]"`), so it seems they should be equal, right? Nope. Recall the previous discussion about how `==` works with `object` references.
+为什么 `a == b` 的结果不是 `true`？它们是相同的字符串值（`"[object Object]"`），如此看来，它们应该是相等的，对不对？不，请你回想一下之前讨论过的对象引用在 `==` 中是如何工作的。
 
-But then how are `a <= b` and `a >= b` resulting in `true`, if `a < b` **and** `a == b` **and** `a > b` are all `false`?
+但是，如果 `a < b` **和** `a == b` **以及** `a > b` 的结果都是 `false`，那为什么 `a <= b` 和 `a >= b` 的结果是 `true`？
 
-Because the spec says for `a <= b`, it will actually evaluate `b < a` first, and then negate that result. Since `b < a` is *also* `false`, the result of `a <= b` is `true`.
+因为规范上说，对于`a <= b`，它实际上会先评估 `b < a`，然后将结果取反。因为 `b < a` 的结果 **也是** `false`，所以 `a <= b` 的结果是 `true`。
 
-That's probably awfully contrary to how you might have explained what `<=` does up to now, which would likely have been the literal: "less than *or* equal to." JS more accurately considers `<=` as "not greater than" (`!(a > b)`, which JS treats as `!(b < a)`). Moreover, `a >= b` is explained by first considering it as `b <= a`, and then applying the same reasoning.
+这可能与你想象中的 `<=` 所做的工作完全不同，你认为它可能就如同字面意思那样：“小于或等于。” JS更准确地认为 `<=` 是 “不大于”（`!(a > b)`，JS把它视为`!(b < a)`）。此外，`a >= b` 首先被解释成 `b <= a`，然后应用同样的推理。
 
-Unfortunately, there is no "strict relational comparison" as there is for equality. In other words, there's no way to prevent *implicit* coercion from occurring with relational comparisons like `a < b`, other than to ensure that `a` and `b` are of the same type explicitly before making the comparison.
+不幸的是，并不像相等比较，这里并没有所谓的“严格关系比较”。换句话说，在进行类似 `a < b` 的关系比较时，没有办法阻止 **implicit** coercion 的发生，除非你在比较之前显式的指定 `a` 和 `b` 必须为相同的类型。
 
-Use the same reasoning from our earlier `==` vs. `===` sanity check discussion. If coercion is helpful and reasonably safe, like in a `42 < "43"` comparison, **use it**. On the other hand, if you need to be safe about a relational comparison, *explicitly coerce* the values first, before using `<` (or its counterparts).
+与之前讨论的关于 `==` vs. `===` 的完整性检查的道理一样，如果 coercion 是有益的，合理的安全，如比较 `42 < "43"`，**请放心使用它吧！** 另一方面，如果你需要进行安全的关系比较，请先 **显式强制转换** 待比较的值，然后再使用 `<`（或它的同伴 `>`）。
 
 ```js
 var a = [ 42 ];
