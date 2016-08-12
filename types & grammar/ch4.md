@@ -1989,14 +1989,14 @@ a < b;						// false -- string comparison!
 Number( a ) < Number( b );	// true -- number comparison!
 ```
 
-## Review
+## 小结
 
-In this chapter, we turned our attention to how JavaScript type conversions happen, called **coercion**, which can be characterized as either *explicit* or *implicit*.
+在本章中，我们主要关注 JavaScript 是如何进行类型转换的，称为 **coercion**，可以表征为 **explicit** 或 **implicit**。
 
-Coercion gets a bad rap, but it's actually quite useful in many cases. An important task for the responsible JS developer is to take the time to learn all the ins and outs of coercion to decide which parts will help improve their code, and which parts they really should avoid.
+Coercion 名声不好，但是实际上，在很多情况下非常有用。对于负责任的JS开发者来说，一项重要的任务就是要花时间学习 coercion 的来龙去脉，以决定哪些部分将有助于提高代码的质量，哪些部分应该避免。
 
-*Explicit* coercion is code which is obvious that the intent is to convert a value from one type to another. The benefit is improvement in readability and maintainability of code by reducing confusion.
+**Explicit** coercion 是指可以很明显地看出值类型转换的意图。这样做的好处是通过减少混乱来提高代码的可读性和可维护性。
 
-*Implicit* coercion is coercion that is "hidden" as a side-effect of some other operation, where it's not as obvious that the type conversion will occur. While it may seem that *implicit* coercion is the opposite of *explicit* and is thus bad (and indeed, many think so!), actually *implicit* coercion is also about improving the readability of code.
+**Implicit** coercion 是指“隐藏”在一些其他操作中的副作用，发生类型转换的时候并不明显。**implicit** coercion 看起来是 **explicit** 的对立面，所以它是坏的（事实上，很多人这么认为！），实际上 **implicit** coercion 也能提高代码的可读性。
 
-Especially for *implicit*, coercion must be used responsibly and consciously. Know why you're writing the code you're writing, and how it works. Strive to write code that others will easily be able to learn from and understand as well.
+特别是对 **implicit**，必须负责任地和自觉地使用 coercion。要明白你为什么写这样的代码，它是如何工作的。力争编写别人能够轻松学习和理解的代码。
